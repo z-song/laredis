@@ -3,6 +3,7 @@
 namespace Encore\Redis\Middleware;
 
 use Closure;
+use Encore\Redis\Routing\Request;
 use Encore\Redis\Exceptions\AuthException;
 
 class Authenticate
@@ -10,12 +11,12 @@ class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param  \Encore\Redis\Routing\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param Request $request
+     * @param callable $next
      * @return mixed
+     * @throws AuthException
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         if ($request->authenticated()) {
             return $next($request);

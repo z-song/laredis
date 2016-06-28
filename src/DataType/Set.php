@@ -2,10 +2,10 @@
 
 namespace Encore\Redis\DataType;
 
-class String implements DataType
+class Set implements DataType
 {
     public static function commands()
     {
-        return Commands::string();
+        return Commands::set();
     }
 }

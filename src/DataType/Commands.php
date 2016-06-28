@@ -20,6 +20,21 @@ class Commands
             'GETSET', 'INCR', 'INCRBY', 'INCRBYFLOAT', 'MGET', 'MSET', 'MSETNX',
             'PSETEX', 'SET', 'SETBIT', 'SETEX', 'SETNX', 'SETRANGE', 'STRLEN',
         ],
+
+        'set'  => [
+            'SADD', 'SCARD', 'SDIFF', 'SDIFFSTORE', 'SINTER', 'SISMEMBER', 'SMEMBERS',
+            'SMOVE', 'SPOP', 'SRANDMEMBER', 'SREM', 'SUNION', 'SUNIONSTORE', 'SSCAN',
+        ],
+
+        'server' => [
+            'BGREWRITEAOF', 'BGSAVE', 'CLIENT', 'TIME', 'COMMAND', 'CONFIG','DBSIZE','DEBUG',
+            'FLUSHALL', 'FLUSHDB', 'INFO', 'LASTSAVE', 'MONITOR', 'ROLE', 'SAVE', 'SHUTDOWN',
+            'SLAVEOF', 'SLOWLOG', 'SYNC',
+        ],
+
+        'connection' => [
+            'AUTH', 'ECHO', 'PING', 'QUIT', 'SELECT',
+        ]
     ];
 
     public static function hash()
@@ -35,6 +50,21 @@ class Commands
     public static function string()
     {
         return static::$commands['string'];
+    }
+
+    public static function set()
+    {
+        return static::$commands['set'];
+    }
+
+    public static function server()
+    {
+        return static::$commands['server'];
+    }
+
+    public static function connection()
+    {
+        return static::$commands['connection'];
     }
 
     public static function all()

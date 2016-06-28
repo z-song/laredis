@@ -9,10 +9,15 @@ class AuthController extends Controller
 {
     public function handle($password)
     {
-        if ($password !== '123') {
+        if (! $this->validatePassword($password)) {
             throw new AuthException('密码错误');
         }
 
         return true;
+    }
+
+    protected function validatePassword($password)
+    {
+        return in_array($password, (array) config('redis-server.password'));
     }
 }

@@ -42,7 +42,6 @@ class ServeCommand extends Command
 
         $server = new Server("tcp://$host:$port");
         try {
-            $server->setOptions($this->option());
             $server->$action();
         } catch (Exception $e) {
             dump($e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());

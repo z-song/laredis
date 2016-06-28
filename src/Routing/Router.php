@@ -7,6 +7,7 @@ use Encore\Redis\DataType\Commands;
 use Encore\Redis\DataType\DataType;
 use Encore\Redis\DataType\Hash;
 use Encore\Redis\DataType\RList;
+use Encore\Redis\DataType\Server;
 use Encore\Redis\Exceptions\NotFoundCommandException;
 use Illuminate\Container\Container;
 use Encore\Redis\DataType\String;
@@ -311,11 +312,24 @@ class Router
 
     public function dispatch(Request $request)
     {
-        $route = $this->findRoute($request);
-
-        $response = $this->runRouteWithinStack($route, $request);
+        if (Server::hasCommand($request->command())) {
+            $response = $this->runServerCommand($request);
+        } else {
+            $route = $this->findRoute($request);
+            $response = $this->runRouteWithinStack($route, $request);
+        }
 
         return $response;
+    }
+
+    protected function runServerCommand($request)
+    {
+        $server = new Server();
+
+        $parameters = array_merge([$request->key()], $request->parameters());
+        $response = call_user_func_array([$server, strtolower($request->command())], $parameters);
+
+        return $this->prepareResponse($request, $response);
     }
 
     /**

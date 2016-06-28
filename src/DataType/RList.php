@@ -4,7 +4,7 @@ namespace Encore\Redis\DataType;
 
 class RList implements DataType
 {
-    public function commands()
+    public static function commands()
     {
         return Commands::rlist();
     }
