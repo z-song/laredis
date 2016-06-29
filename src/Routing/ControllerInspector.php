@@ -52,7 +52,7 @@ class ControllerInspector
             return false;
         }
 
-        return  in_array(strtoupper($method->name), $this->dataType->commands());
+        return in_array(strtoupper($method->name), $this->dataType->commands());
     }
 
     public function getMethodData($method)

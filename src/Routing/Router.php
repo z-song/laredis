@@ -3,7 +3,7 @@
 namespace Encore\Redis\Routing;
 
 use Closure;
-use Encore\Redis\DataType\Commands;
+use Encore\Redis\Command\Commands;
 use Encore\Redis\DataType\DataType;
 use Encore\Redis\DataType\Hash;
 use Encore\Redis\DataType\RList;
@@ -312,7 +312,7 @@ class Router
 
     public function dispatch(Request $request)
     {
-        if (Server::hasCommand($request->command())) {
+        if (Commands::supports($request->command())) {
             $response = $this->runServerCommand($request);
         } else {
             $route = $this->findRoute($request);

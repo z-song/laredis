@@ -6,15 +6,7 @@ use Encore\Redis\Exceptions\NotFoundCommandException;
 
 class Server implements DataType
 {
-    public static function commands()
-    {
-        return Commands::server();
-    }
-
-    public static function hasCommand($command)
-    {
-        return in_array(strtoupper($command), static::commands());
-    }
+    use DataTypeTrait;
 
     public function client()
     {
