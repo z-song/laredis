@@ -8,7 +8,7 @@ class Request
 {
     protected $command = '';
 
-    protected $key = '';
+    //protected $key = '';
 
     protected $parameters = [];
 
@@ -17,7 +17,7 @@ class Request
     public function __construct($command, $parameters = [])
     {
         $this->command    = strtoupper($command);
-        $this->key        = array_shift($parameters);
+        //$this->key        = array_shift($parameters);
         $this->parameters = $parameters;
     }
 
@@ -26,32 +26,32 @@ class Request
         return $this->command;
     }
 
-    public function key()
-    {
-        return $this->key;
-    }
+//    public function key()
+//    {
+//        return $this->key;
+//    }
 
     public function parameters()
     {
         return $this->parameters;
     }
 
-    public function path()
-    {
-        $pattern = trim($this->key(), '/');
-
-        return $pattern == '' ? '/' : $pattern;
-    }
+//    public function path()
+//    {
+//        $pattern = trim($this->key(), '/');
+//
+//        return $pattern == '' ? '/' : $pattern;
+//    }
 
     /**
      * Get the current encoded path info for the request.
      *
      * @return string
      */
-    public function decodedPath()
-    {
-        return rawurldecode($this->path());
-    }
+//    public function decodedPath()
+//    {
+//        return rawurldecode($this->path());
+//    }
 
     public function setConnection($connection)
     {

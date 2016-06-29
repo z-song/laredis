@@ -2,7 +2,10 @@
 
 namespace Encore\Redis\Command;
 
-class ConnectionEcho
+class ConnectionEcho extends Command
 {
-
+    public function execute()
+    {
+        return (string) $this->arguments[0];
+    }
 }

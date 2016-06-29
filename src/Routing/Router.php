@@ -4,16 +4,16 @@ namespace Encore\Redis\Routing;
 
 use Closure;
 use Encore\Redis\Command\Commands;
+use Encore\Redis\Command\Redis;
 use Encore\Redis\DataType\DataType;
 use Encore\Redis\DataType\Hash;
 use Encore\Redis\DataType\RList;
-use Encore\Redis\DataType\Server;
-use Encore\Redis\Exceptions\NotFoundCommandException;
 use Illuminate\Container\Container;
 use Encore\Redis\DataType\String;
-use Encore\Redis\Exceptions\NotFoundRouteException;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Arr;
+use Encore\Redis\Exceptions\NotFoundRouteException;
+use Encore\Redis\Exceptions\NotFoundCommandException;
 
 class Router
 {
@@ -55,13 +55,6 @@ class Router
     public function __construct(Container $container = null)
     {
         $this->container = $container ?: new Container;
-
-        $this->initAuthHandler();
-    }
-
-    protected function initAuthHandler()
-    {
-        $this->addRoute('auth', '{password}', '\Encore\Redis\Controllers\AuthController@handle');
     }
 
     public function string($uri, $controller = null)
@@ -312,8 +305,8 @@ class Router
 
     public function dispatch(Request $request)
     {
-        if (Commands::supports($request->command())) {
-            $response = $this->runServerCommand($request);
+        if (Redis::supports($request->command())) {
+            $response = $this->runCommand($request);
         } else {
             $route = $this->findRoute($request);
             $response = $this->runRouteWithinStack($route, $request);
@@ -322,14 +315,19 @@ class Router
         return $response;
     }
 
-    protected function runServerCommand($request)
+    protected function runCommand(Request $request)
     {
-        $server = new Server();
+        $commandClass = Redis::findCommandClass($request->command());
 
-        $parameters = array_merge([$request->key()], $request->parameters());
-        $response = call_user_func_array([$server, strtolower($request->command())], $parameters);
+        $command = new $commandClass($request->parameters());
+        $command->setRequest($request);
 
-        return $this->prepareResponse($request, $response);
+        return $this->prepareResponse($request, $command->execute());
+
+//        $parameters = array_merge([$request->key()], $request->parameters());
+//        $response = call_user_func_array([$server, strtolower($request->command())], $parameters);
+//
+//        return $this->prepareResponse($request, $response);
     }
 
     /**
@@ -491,19 +489,15 @@ class Router
             return call_user_func_array([$this, 'rList'], $arguments);
         }
 
-       if (Commands::has($method)) {
-           $this->addRoute($method, $arguments[0], $arguments[1]);
-       }
+//       if (Commands::has($method)) {
+//           $this->addRoute($method, $arguments[0], $arguments[1]);
+//       }
     }
 
     public function prepareResponse(Request $request, $response)
     {
         if (! $response instanceof Response) {
             $response = new Response($response);
-        }
-
-        if ($request->isCommand('auth') && $response->content() === true) {
-            \Encore\Redis\Auth\Container::add($request->connection()->id);
         }
 
         return $response;

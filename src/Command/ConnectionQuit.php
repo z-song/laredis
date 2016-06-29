@@ -2,7 +2,10 @@
 
 namespace Encore\Redis\Command;
 
-class ConnectionQuit
+class ConnectionQuit extends Command
 {
+    public function execute()
+    {
 
+    }
 }

@@ -2,7 +2,10 @@
 
 namespace Encore\Redis\Command;
 
-class ConnectionPing
+class ConnectionPing extends Command
 {
-
+    public function execute()
+    {
+        return 'PONG';
+    }
 }
