@@ -2,6 +2,7 @@
 
 namespace Encore\Redis\Routing;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
 class Response
@@ -14,21 +15,21 @@ class Response
 
     protected $status;
 
-    public function __construct($content, $status = 1)
+    public function __construct($value, $status = 1)
     {
-        $this->content = $content;
+        $this->value = $value;
         $this->status = $status;
     }
 
-    public function content()
+    public function value()
     {
-        return $this->content;
+        return $this->value;
     }
 
     protected function error($message = '')
     {
         if (empty($message)) {
-            $message = $this->content;
+            $message = $this->value;
         }
 
         if ($message) {
@@ -46,6 +47,10 @@ class Response
     protected function encode($payload)
     {
         $output = '';
+
+        if ($payload instanceof Arrayable) {
+            $payload = $payload->toArray();
+        }
 
         if (is_null($payload)) {
             return "$-1\r\n";
@@ -95,7 +100,7 @@ class Response
             return $this->error();
         }
 
-        return $this->encode($this->content);
+        return $this->encode($this->value);
     }
 
     public function __toString()

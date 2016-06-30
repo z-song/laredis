@@ -5,11 +5,7 @@ namespace Encore\Redis\Routing;
 use Closure;
 use Encore\Redis\Command\Commands;
 use Encore\Redis\Command\Redis;
-use Encore\Redis\DataType\DataType;
-use Encore\Redis\DataType\Hash;
-use Encore\Redis\DataType\RList;
 use Illuminate\Container\Container;
-use Encore\Redis\DataType\String;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Arr;
 use Encore\Redis\Exceptions\NotFoundRouteException;
@@ -46,6 +42,13 @@ class Router
     protected $middleware = [];
 
     /**
+     * Routable data types.
+     *
+     * @var array
+     */
+    protected $routableDataTypes = ['string', 'hash', 'list'];
+
+    /**
      * Create a new Router instance.
      *
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
@@ -57,28 +60,13 @@ class Router
         $this->container = $container ?: new Container;
     }
 
-    public function string($uri, $controller = null)
-    {
-        $this->addControllerRoute(new String(), $uri, $controller);
-    }
-
-    public function hash($uri, $controller = null)
-    {
-        $this->addControllerRoute(new Hash(), $uri, $controller);
-    }
-
-    public function rList($uri, $controller = null)
-    {
-        $this->addControllerRoute(new RList(), $uri, $controller);
-    }
-
-    public function addControllerRoute(DataType $dataType, $uri, $controller)
+    public function addControllerRoute($uri, $controller)
     {
         if (! empty($this->groupStack)) {
-        $prepended = $this->prependGroupUses($controller);
-    }
+            $prepended = $this->prependGroupUses($controller);
+        }
 
-        $routable = (new ControllerInspector($dataType))->getRoutable($prepended);
+        $routable = (new ControllerInspector())->getRoutable($prepended);
 
         foreach ($routable as $command => $routes) {
             foreach ($routes as $route) {
@@ -103,6 +91,11 @@ class Router
         }
 
         $this->routes[$command][] = $route;
+    }
+
+    public function routes()
+    {
+        return $this->routes;
     }
 
     /**
@@ -305,29 +298,19 @@ class Router
 
     public function dispatch(Request $request)
     {
-        if (Redis::supports($request->command())) {
-            $response = $this->runCommand($request);
-        } else {
-            $route = $this->findRoute($request);
-            $response = $this->runRouteWithinStack($route, $request);
+        if (! Redis::supports($request->command())) {
+            throw new NotFoundCommandException($request->command());
         }
 
-        return $response;
-    }
-
-    protected function runCommand(Request $request)
-    {
         $commandClass = Redis::findCommandClass($request->command());
 
-        $command = new $commandClass($request->parameters());
-        $command->setRequest($request);
+        $command = new $commandClass($request);
+
+        if ($command->routable()) {
+            $command->setRouter($this);
+        }
 
         return $this->prepareResponse($request, $command->execute());
-
-//        $parameters = array_merge([$request->key()], $request->parameters());
-//        $response = call_user_func_array([$server, strtolower($request->command())], $parameters);
-//
-//        return $this->prepareResponse($request, $response);
     }
 
     /**
@@ -337,7 +320,7 @@ class Router
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    protected function runRouteWithinStack(Route $route, Request $request)
+    public function runRouteWithinStack(Route $route, Request $request)
     {
         $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
             $this->container->make('middleware.disable') === true;
@@ -466,32 +449,39 @@ class Router
 
     /**
      * @param Request $request
-     * @return Route
+     * @param bool $throwException
+     * @return mixed
+     * @throws NotFoundCommandException
+     * @throws NotFoundRouteException
      */
-    protected function findRoute(Request $request)
+    public function findRoute(Request $request, $throwException = true)
     {
-        if (! array_key_exists($request->command(), $this->routes)) {
-            throw new NotFoundCommandException($request->command());
+        if (! array_key_exists($request->command(), $this->routes) && $throwException) {
+            throw new NotFoundRouteException($request->command());
         }
 
-        foreach ($this->routes[$request->command()] as $route) {
+        $routesForCommand = array_get($this->routes, $request->command());
+
+        foreach ((array) $routesForCommand as $route) {
             if ($route->matches($request)) {
                 return $route->bind($request);
             }
         }
 
-        throw new NotFoundRouteException($request->path());
+        if ($throwException) {
+            throw new NotFoundRouteException($request->path());
+        }
     }
 
     public function __call($method, $arguments)
     {
-        if ($method == 'list') {
-            return call_user_func_array([$this, 'rList'], $arguments);
+        if (in_array($method, $this->routableDataTypes)) {
+            return call_user_func_array([$this, 'addControllerRoute'], $arguments);
         }
 
-//       if (Commands::has($method)) {
-//           $this->addRoute($method, $arguments[0], $arguments[1]);
-//       }
+        if (Redis::supports($method)) {
+            $this->addRoute($method, $arguments[0], $arguments[1]);
+        }
     }
 
     public function prepareResponse(Request $request, $response)

@@ -69,6 +69,7 @@ class Server
         $this->context = stream_context_create($contextOption);
 
         static::$eventLoop = new EventLoop();
+        //static::$eventLoop = new Libevent();
 
         static::init();
     }

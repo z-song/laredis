@@ -2,18 +2,12 @@
 
 namespace Encore\Redis\Routing;
 
+use Encore\Redis\Command\Redis;
 use ReflectionClass;
 use ReflectionMethod;
 
 class ControllerInspector
 {
-    protected $dataType;
-
-    public function __construct($dataType)
-    {
-        $this->dataType = $dataType;
-    }
-
     /**
      * Get the routable methods for a controller.
      *
@@ -52,7 +46,7 @@ class ControllerInspector
             return false;
         }
 
-        return in_array(strtoupper($method->name), $this->dataType->commands());
+        return Redis::supports($method->name);
     }
 
     public function getMethodData($method)

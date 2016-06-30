@@ -145,7 +145,7 @@ class ControllerDispatcher
             $route->parametersWithoutNulls(), $instance, $method
         );
 
-        $parameters = array_merge($parameters, $request->parameters());
+        $parameters = array_merge($parameters, array_slice($request->parameters(), 1));
 
         return $instance->callAction($method, $parameters);
     }

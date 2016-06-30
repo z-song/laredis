@@ -72,8 +72,10 @@ class Connection
             $response = new Response(null);
         } catch (NotFoundCommandException $e) {
             $response = new Response("unsupported command '{$e->getMessage()}'", Response::ERR);
+        } catch (\InvalidArgumentException $e) {
+            $response = new Response("wrong number of arguments for '{$e->getMessage()}' command", Response::ERR);
         } catch (\Exception $e) {
-            $response = new Response($e->getMessage(), Response::ERR);
+            $response = new Response($e->getMessage() . $e->getTraceAsString(), Response::ERR);
         }
 
         $this->sendBuffer = (string) $response;

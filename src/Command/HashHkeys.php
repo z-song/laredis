@@ -2,7 +2,9 @@
 
 namespace Encore\Redis\Command;
 
-class ConnectionSelect extends Command
+class HashHkeys extends Command
 {
+    use RoutableTrait;
+
     protected $argumentCount = 1;
 }

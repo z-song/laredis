@@ -21,37 +21,47 @@ class Request
         $this->parameters = $parameters;
     }
 
-    public function command()
+    public function command($command = null)
     {
+        if (is_string($command)) {
+            $this->command = $command;
+            return;
+        }
+
         return $this->command;
     }
 
-//    public function key()
-//    {
-//        return $this->key;
-//    }
-
-    public function parameters()
+    public function parameters($parameters = null)
     {
+        if (is_array($parameters)) {
+            $this->parameters = $parameters;
+            return;
+        }
+
         return $this->parameters;
     }
 
-//    public function path()
-//    {
-//        $pattern = trim($this->key(), '/');
-//
-//        return $pattern == '' ? '/' : $pattern;
-//    }
+    public function parameter($index)
+    {
+        return isset($this->parameters[$index]) ? $this->parameters[$index] : null;
+    }
+
+    public function path()
+    {
+        $pattern = trim($this->parameter(0), '/');
+
+        return $pattern == '' ? '/' : $pattern;
+    }
 
     /**
      * Get the current encoded path info for the request.
      *
      * @return string
      */
-//    public function decodedPath()
-//    {
-//        return rawurldecode($this->path());
-//    }
+    public function decodedPath()
+    {
+        return rawurldecode($this->path());
+    }
 
     public function setConnection($connection)
     {

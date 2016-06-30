@@ -18,10 +18,17 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->authenticated()) {
+        if ($request->authenticated() || $this->passwordNotSet()) {
             return $next($request);
         }
 
         throw new AuthException('Unauthorized');
+    }
+
+    protected function passwordNotSet()
+    {
+        $passwords = (array) config('redis-server.password');
+
+        return empty($passwords);
     }
 }
