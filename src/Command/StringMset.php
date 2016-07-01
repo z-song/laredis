@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class StringMset extends Command
+class StringMset extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -15,7 +15,7 @@ class StringMset extends Command
     {
         $chunks = array_chunk($this->request->parameters(), 2);
 
-        foreach($chunks as $chunk) {
+        foreach ($chunks as $chunk) {
 
             $request = clone $this->request;
             $request->command('SET');

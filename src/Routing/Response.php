@@ -3,15 +3,16 @@
 namespace Encore\Redis\Routing;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Arr;
 
-class Response
+class Response implements Renderable
 {
     const ERR = 0;
 
     const OK  = 1;
 
-    protected $content;
+    protected $value;
 
     protected $status;
 

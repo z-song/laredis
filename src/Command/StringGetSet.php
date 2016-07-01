@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class StringGetSet extends Command
+class StringGetSet extends Command implements RoutableInterface
 {
     use RoutableTrait {
         execute as traitExecute;

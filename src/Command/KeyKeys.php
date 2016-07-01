@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class KeyKeys extends Command
+class KeyKeys extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

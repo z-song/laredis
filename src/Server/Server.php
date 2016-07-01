@@ -17,13 +17,6 @@ class Server
     protected $context = null;
 
     /**
-     * Default backlog. Backlog is the maximum length of the queue of pending connections.
-     *
-     * @var int
-     */
-    const DEFAUL_BACKLOG = 1024;
-
-    /**
      * Server socket.
      *
      * @var null
@@ -36,7 +29,7 @@ class Server
     public static $eventLoop = null;
 
     /**
-     * @var array`
+     * @var array
      */
     protected $connections = [];
 
@@ -52,10 +45,6 @@ class Server
      */
     protected static $pid = null;
 
-    //protected $options = [];
-
-    //protected $daemonize = false;
-
     /**
      * Create a instance of Server
      *
@@ -65,11 +54,7 @@ class Server
     public function __construct($socketName = 'tcp://localhost:6379', $contextOption = [])
     {
         $this->socketName = $socketName;
-
         $this->context = stream_context_create($contextOption);
-
-        static::$eventLoop = new EventLoop();
-        //static::$eventLoop = new Libevent();
 
         static::init();
     }
@@ -109,14 +94,15 @@ class Server
     {
         echo "Service starting ...\r\n";
 
-        if (static::isDaemonize()) {
-            static::daemonize();
-        }
+        static::daemonize();
 
         $this->savePid();
         $this->listen();
 
-        static::$eventLoop->add($this->server, EventLoop::EV_READ, array($this, 'acceptConnection'));
+        //static::$eventLoop = new EventLoop();
+        static::$eventLoop = new Libevent();
+
+        static::$eventLoop->add($this->server, EventLoop::EV_READ, [$this, 'acceptConnection']);
         static::$eventLoop->loop();
     }
 
@@ -139,6 +125,9 @@ class Server
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGKILL");
     }
 
+    /**
+     * Restart the server.
+     */
     public function restart()
     {
         $this->stop();
@@ -153,21 +142,26 @@ class Server
     /**
      * Accept a connection.
      *
-     * @param resource $socket
+     * @param resource $serverSocket
      * @return void
      */
-    public function acceptConnection($socket)
+    public function acceptConnection($serverSocket)
     {
         // Accept a connection on server socket.
-        $new_socket = @stream_socket_accept($socket, 0, $remoteAddress);
+        $socket = @stream_socket_accept($serverSocket, 0, $remoteAddress);
         // Thundering herd.
-        if (false === $new_socket) {
+        if (false === $socket) {
             return;
         }
 
         // TcpConnection.
-        $connection = new Connection($new_socket, $remoteAddress);
+        $connection = new Connection($socket, $remoteAddress);
         $this->connections[$connection->id] = $connection;
+    }
+
+    public function closeConnection($id)
+    {
+        unset($this->connections[$id]);
     }
 
     protected static function isDaemonize()
@@ -177,6 +171,10 @@ class Server
 
     protected static function daemonize()
     {
+        if (! static::isDaemonize()) {
+            return;
+        }
+
         umask(0);
         $pid = pcntl_fork();
         if (-1 === $pid) {

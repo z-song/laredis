@@ -32,9 +32,11 @@ class ControllerDispatcher
      * @param  \Illuminate\Container\Container  $container
      * @return void
      */
-    public function __construct(Router $router,
-                                Container $container = null)
-    {
+    public function __construct(
+        Router $router,
+        Container $container = null
+    ) {
+    
         $this->router = $router;
         $this->container = $container;
     }
@@ -142,7 +144,9 @@ class ControllerDispatcher
     protected function call($instance, $route, $method, $request)
     {
         $parameters = $this->resolveClassMethodDependencies(
-            $route->parametersWithoutNulls(), $instance, $method
+            $route->parametersWithoutNulls(),
+            $instance,
+            $method
         );
 
         $parameters = array_merge($parameters, array_slice($request->parameters(), 1));

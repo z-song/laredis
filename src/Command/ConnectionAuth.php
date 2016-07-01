@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-use Encore\Redis\Auth\Container;
+use Encore\Redis\Auth\AuthManager;
 use Encore\Redis\Exceptions\AuthException;
 
 class ConnectionAuth extends Command
@@ -15,7 +15,7 @@ class ConnectionAuth extends Command
             throw new AuthException('invalid password');
         }
 
-        Container::add($this->request->connection()->id);
+        AuthManager::authorize($this->request->connection());
 
         return true;
     }

@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class HashHdel extends Command
+class HashHdel extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

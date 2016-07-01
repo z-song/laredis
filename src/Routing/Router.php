@@ -5,6 +5,7 @@ namespace Encore\Redis\Routing;
 use Closure;
 use Encore\Redis\Command\Commands;
 use Encore\Redis\Command\Redis;
+use Encore\Redis\Command\RoutableInterface;
 use Illuminate\Container\Container;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Arr;
@@ -46,7 +47,7 @@ class Router
      *
      * @var array
      */
-    protected $routableDataTypes = ['string', 'hash', 'list'];
+    protected $routableDataTypes = ['string', 'hash', 'list', 'pubsub'];
 
     /**
      * Create a new Router instance.
@@ -306,7 +307,7 @@ class Router
 
         $command = new $commandClass($request);
 
-        if ($command->routable()) {
+        if ($command instanceof RoutableInterface) {
             $command->setRouter($this);
         }
 
@@ -331,10 +332,7 @@ class Router
             ->send($request)
             ->through($middleware)
             ->then(function ($request) use ($route) {
-                return $this->prepareResponse(
-                    $request,
-                    $route->run($request)
-                );
+                return $route->run($request);
             });
     }
 
@@ -400,14 +398,17 @@ class Router
             // reference other groups without needing to repeat all their middlewares.
             if (isset($this->middlewareGroups[$middleware])) {
                 $results = array_merge(
-                    $results, $this->parseMiddlewareGroup($middleware)
+                    $results,
+                    $this->parseMiddlewareGroup($middleware)
                 );
 
                 continue;
             }
 
             list($middleware, $parameters) = array_pad(
-                explode(':', $middleware, 2), 2, null
+                explode(':', $middleware, 2),
+                2,
+                null
             );
 
             // If this middleware is actually a route middleware, we will extract the full
@@ -486,10 +487,10 @@ class Router
 
     public function prepareResponse(Request $request, $response)
     {
-        if (! $response instanceof Response) {
-            $response = new Response($response);
+        if ($response instanceof Response) {
+            return $response;
         }
 
-        return $response;
+        return new Response($response);
     }
 }

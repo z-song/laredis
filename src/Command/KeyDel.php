@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class KeyDel extends Command
+class KeyDel extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -15,7 +15,7 @@ class KeyDel extends Command
     {
         $success = 0;
 
-        foreach($this->request->parameters() as $key) {
+        foreach ($this->request->parameters() as $key) {
 
             $request = clone $this->request;
             $request->parameters([$key]);

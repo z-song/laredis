@@ -4,7 +4,7 @@ namespace Encore\Redis\Command;
 
 use Encore\Redis\Routing\Response;
 
-class StringMget extends Command
+class StringMget extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -17,7 +17,7 @@ class StringMget extends Command
     {
         $result = [];
 
-        foreach($this->request->parameters() as $key) {
+        foreach ($this->request->parameters() as $key) {
 
             $request = clone $this->request;
             $request->command('GET');

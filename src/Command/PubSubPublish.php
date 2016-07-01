@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class HashHget extends Command implements RoutableInterface
+class PubSubPublish extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

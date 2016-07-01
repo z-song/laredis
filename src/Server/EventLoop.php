@@ -58,7 +58,14 @@ class EventLoop
      *
      * @var array
      */
-    public $allEvents = array();
+    public $allEvents = [];
+
+    /**
+     * Event listeners of signal.
+     *
+     * @var array
+     */
+    public $signalEvents = [];
 
     /**
      * Select timeout.
@@ -70,7 +77,7 @@ class EventLoop
     /**
      * {@inheritdoc}
      */
-    public function add($fd, $flag, $func, $args = array())
+    public function add($fd, $flag, $func, $args = [])
     {
         switch ($flag) {
             case self::EV_READ:
@@ -83,18 +90,11 @@ class EventLoop
                 $this->allEvents[$fdKey][$flag] = array($func, $fd);
                 $this->writeFds[$fdKey]         = $fd;
                 break;
-//            case self::EV_SIGNAL:
-//                $fdKey                              = (int)$fd;
-//                $this->_signalEvents[$fdKey][$flag] = array($func, $fd);
-//                pcntl_signal($fd, array($this, 'signalHandler'));
-//                break;
-//            case self::EV_TIMER:
-//            case self::EV_TIMER_ONCE:
-//                $run_time = microtime(true) + $fd;
-//                $this->_scheduler->insert($this->_timerId, -$run_time);
-//                $this->_task[$this->_timerId] = array($func, (array)$args, $flag, $fd);
-//                $this->tick();
-//                return $this->_timerId++;
+            case self::EV_SIGNAL:
+                $fdKey                              = (int)$fd;
+                $this->signalEvents[$fdKey][$flag] = array($func, $fd);
+                pcntl_signal($fd, array($this, 'signalHandler'));
+                break;
         }
 
         return true;
@@ -119,14 +119,10 @@ class EventLoop
                     unset($this->allEvents[$fd_key]);
                 }
                 return true;
-//            case self::EV_SIGNAL:
-//                unset($this->_signalEvents[$fd_key]);
-//                pcntl_signal($fd, SIG_IGN);
-//                break;
-//            case self::EV_TIMER:
-//            case self::EV_TIMER_ONCE;
-//                unset($this->_task[$fd_key]);
-//                return true;
+            case self::EV_SIGNAL:
+                unset($this->signalEvents[$fd_key]);
+                pcntl_signal($fd, SIG_IGN);
+                break;
         }
         return false;
     }
@@ -146,10 +142,6 @@ class EventLoop
             // Waiting read/write/signal/timeout events.
             $ret = @stream_select($read, $write, $e, 0, $this->selectTimeout);
 
-//            if (!$this->_scheduler->isEmpty()) {
-//                $this->tick();
-//            }
-
             if (!$ret) {
                 continue;
             }
@@ -157,16 +149,20 @@ class EventLoop
             foreach ($read as $fd) {
                 $fdKey = (int)$fd;
                 if (isset($this->allEvents[$fdKey][self::EV_READ])) {
-                    call_user_func_array($this->allEvents[$fdKey][self::EV_READ][0],
-                        array($this->allEvents[$fdKey][self::EV_READ][1]));
+                    call_user_func_array(
+                        $this->allEvents[$fdKey][self::EV_READ][0],
+                        array($this->allEvents[$fdKey][self::EV_READ][1])
+                    );
                 }
             }
 
             foreach ($write as $fd) {
                 $fdKey = (int)$fd;
                 if (isset($this->allEvents[$fdKey][self::EV_WRITE])) {
-                    call_user_func_array($this->allEvents[$fdKey][self::EV_WRITE][0],
-                        array($this->allEvents[$fdKey][self::EV_WRITE][1]));
+                    call_user_func_array(
+                        $this->allEvents[$fdKey][self::EV_WRITE][0],
+                        array($this->allEvents[$fdKey][self::EV_WRITE][1])
+                    );
                 }
             }
         }

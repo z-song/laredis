@@ -143,7 +143,8 @@ class Route
     protected function runCallable(Request $request)
     {
         $parameters = $this->resolveMethodDependencies(
-            $this->parametersWithoutNulls(), new ReflectionFunction($this->action['uses'])
+            $this->parametersWithoutNulls(),
+            new ReflectionFunction($this->action['uses'])
         );
 
         $result = call_user_func_array($this->action['uses'], $parameters);
@@ -232,7 +233,8 @@ class Route
         }
 
         $this->action['middleware'] = array_merge(
-            (array) Arr::get($this->action, 'middleware', []), $middleware
+            (array) Arr::get($this->action, 'middleware', []),
+            $middleware
         );
 
         return $this;
@@ -422,9 +424,7 @@ class Route
         // compile that and get the parameter matches for this domain. We will then
         // merge them into this parameters array so that this array is completed.
         $params = $this->matchToKeys(
-
             array_slice($this->bindPathParameters($request), 1)
-
         );
 
         // If the route has a regular expression for the host part of the URI, we will
@@ -432,7 +432,8 @@ class Route
         // merge them into this parameters array so that this array is completed.
         if (! is_null($this->compiled->getHostRegex())) {
             $params = $this->bindHostParameters(
-                $request, $params
+                $request,
+                $params
             );
         }
 
@@ -530,9 +531,7 @@ class Route
         // it is available. Otherwise we will need to find it in the action list.
         if (is_callable($action)) {
             return ['uses' => $action];
-        }
-
-        // If no "uses" property has been set, we will dig through the array to find a
+        } // If no "uses" property has been set, we will dig through the array to find a
         // Closure instance within this list. We will set the first Closure we come
         // across into the "uses" property that will get fired off by this route.
         elseif (! isset($action['uses'])) {
@@ -541,7 +540,8 @@ class Route
 
         if (is_string($action['uses']) && ! Str::contains($action['uses'], '@')) {
             throw new UnexpectedValueException(sprintf(
-                'Invalid route action: [%s]', $action['uses']
+                'Invalid route action: [%s]',
+                $action['uses']
             ));
         }
 

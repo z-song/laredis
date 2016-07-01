@@ -2,13 +2,11 @@
 
 namespace Encore\Redis\Routing;
 
-use Encore\Redis\Auth\Container;
+use Encore\Redis\Auth\AuthManager;
 
 class Request
 {
     protected $command = '';
-
-    //protected $key = '';
 
     protected $parameters = [];
 
@@ -17,7 +15,6 @@ class Request
     public function __construct($command, $parameters = [])
     {
         $this->command    = strtoupper($command);
-        //$this->key        = array_shift($parameters);
         $this->parameters = $parameters;
     }
 
@@ -53,11 +50,6 @@ class Request
         return $pattern == '' ? '/' : $pattern;
     }
 
-    /**
-     * Get the current encoded path info for the request.
-     *
-     * @return string
-     */
     public function decodedPath()
     {
         return rawurldecode($this->path());
@@ -75,7 +67,7 @@ class Request
 
     public function authenticated()
     {
-        return Container::has($this->connection->id);
+        return AuthManager::check($this->connection);
     }
 
     public function isCommand($command)
@@ -91,5 +83,4 @@ class Request
             return $all[$key];
         }
     }
-
 }

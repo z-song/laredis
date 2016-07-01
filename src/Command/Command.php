@@ -2,6 +2,7 @@
 
 namespace Encore\Redis\Command;
 
+use InvalidArgumentException;
 use Encore\Redis\Routing\Request;
 
 abstract class Command
@@ -19,7 +20,9 @@ abstract class Command
         $this->arguments = $request->parameters();
 
         if (! $this->validateArguments()) {
-            throw new \InvalidArgumentException(strtolower($request->command()));
+            throw new InvalidArgumentException(
+                strtolower($request->command())
+            );
         }
     }
 
@@ -31,10 +34,5 @@ abstract class Command
     public function execute()
     {
         return true;
-    }
-
-    public function routable()
-    {
-        return false;
     }
 }

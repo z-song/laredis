@@ -6,6 +6,6 @@ class ConnectionQuit extends Command
 {
     public function execute()
     {
-
+        return true;
     }
 }

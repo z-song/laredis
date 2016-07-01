@@ -25,6 +25,9 @@ class Authenticate
         throw new AuthException('Unauthorized');
     }
 
+    /**
+     * @return bool
+     */
     protected function passwordNotSet()
     {
         $passwords = (array) config('redis-server.password');

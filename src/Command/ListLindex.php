@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class ListLindex extends Command
+class ListLindex extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

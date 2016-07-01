@@ -2,7 +2,7 @@
 
 namespace Encore\Redis\Command;
 
-class HashHmget extends Command
+class HashHmget extends Command implements RoutableInterface
 {
     use RoutableTrait {
         execute as traitExecute;

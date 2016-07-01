@@ -32,12 +32,4 @@ trait RoutableTrait
 
         return $this->router->runRouteWithinStack($route, $request);
     }
-
-    /**
-     * @return bool
-     */
-    public function routable()
-    {
-        return true;
-    }
 }

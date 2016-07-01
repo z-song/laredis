@@ -17,7 +17,7 @@ class Redis
             'AUTH'      => ConnectionAuth::class,
             'ECHO'      => ConnectionEcho::class,
             'PING'      => ConnectionPing::class,
-            //'QUIT'    => ConnectionQuit::class,
+            'QUIT'      => ConnectionQuit::class,
             'SELECT'    => ConnectionSelect::class,
 
             'TIME'      => ServerTime::class,
@@ -46,6 +46,9 @@ class Redis
             'LINDEX'    => ListLindex::class,
             'LRANGE'    => ListLrange::class,
             'LLEN'      => ListLlen::class,
+
+            'PUBLISH'   => PubSubPublish::class,
+            'SUBSCRIBE' => PubSubSubscribe::class,
         ];
     }
 
