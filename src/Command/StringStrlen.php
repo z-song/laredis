@@ -6,5 +6,7 @@ class StringStrlen extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'STRLEN';
+
+    protected $arity = 1;
 }

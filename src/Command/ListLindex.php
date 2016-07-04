@@ -6,5 +6,7 @@ class ListLindex extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 2;
+    protected $name = 'LINDEX';
+
+    protected $arity = 2;
 }

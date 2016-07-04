@@ -6,5 +6,7 @@ class ListLlen extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'LLEN';
+
+    protected $arity = 1;
 }

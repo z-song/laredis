@@ -6,7 +6,9 @@ class KeyExists extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'EXISTS';
+
+    protected $arity = 1;
 
     public function execute()
     {

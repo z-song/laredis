@@ -6,9 +6,13 @@ class StringMset extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
+    protected $name = 'MSET';
+
+    protected $arity = -2;
+
     protected function validateArguments()
     {
-        return count($this->arguments) > 0;
+        return parent::validateArguments() && count($this->arguments)%2 !== 0 ;
     }
 
     public function execute()

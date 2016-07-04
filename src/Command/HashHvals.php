@@ -6,5 +6,7 @@ class HashHvals extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'HVALS';
+
+    protected $arity = 1;
 }

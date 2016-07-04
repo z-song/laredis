@@ -6,7 +6,9 @@ class KeyKeys extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'KEYS';
+
+    protected $arity = 1;
 
     public function execute()
     {

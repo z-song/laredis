@@ -6,10 +6,9 @@ class HashHdel extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected function validateArguments()
-    {
-        return count($this->arguments) > 1;
-    }
+    protected $name = 'HDEL';
+
+    protected $arity = -1;
 
     public function execute()
     {

@@ -2,12 +2,11 @@
 
 namespace Encore\Redis\Server;
 
-use Encore\Redis\Auth\AuthManager;
 use Exception;
-use Illuminate\Contracts\Support\Renderable;
 use InvalidArgumentException;
 use Encore\Redis\Routing\Request;
 use Encore\Redis\Routing\Response;
+use Illuminate\Contracts\Support\Renderable;
 use Encore\Redis\Exceptions\NotFoundRouteException;
 use Encore\Redis\Exceptions\NotFoundCommandException;
 
@@ -26,7 +25,7 @@ class Connection
     /**
      * @var Server
      */
-    protected $server;
+    public $server;
 
     /**
      * Remote address.
@@ -71,6 +70,13 @@ class Connection
     public static $counter = 1;
 
     /**
+     * If connection is authenticated.
+     *
+     * @var bool
+     */
+    public $authenticated = false;
+
+    /**
      * Create a new connection instance.
      *
      * @param resource $socket
@@ -86,11 +92,6 @@ class Connection
 
         stream_set_blocking($this->socket, 0);
         Server::$eventLoop->add($this->socket, EventLoop::EV_READ, [$this, 'read']);
-    }
-
-    public function setServer(Server $server)
-    {
-        $this->server = $server;
     }
 
     /**
@@ -171,7 +172,7 @@ class Connection
             $this->server->closeConnection($this->id);
         }
 
-        AuthManager::remove($this);
+        $this->authenticated = false;
     }
 
     /**

@@ -2,32 +2,27 @@
 
 namespace Encore\Redis\Command;
 
-use Encore\Redis\Auth\AuthManager;
 use Encore\Redis\Exceptions\AuthException;
+use Encore\Redis\Server\Server;
 
 class ConnectionAuth extends Command
 {
-    protected $argumentCount = 1;
+    protected $name = 'AUTH';
+
+    protected $arity = 1;
 
     public function execute()
     {
-        if (! $this->validatePassword($this->arguments[0])) {
-            throw new AuthException('invalid password');
-        }
-
-        AuthManager::authorize($this->request->connection());
-
-        return true;
-    }
-
-    protected function validatePassword($password)
-    {
-        $passwords  = (array) config('redis-server.password');
-
-        if (empty($passwords)) {
+        if (! Server::requirePass()) {
             throw new AuthException('Client sent AUTH, but no password is set');
         }
 
-        return in_array($password, $passwords);
+        if (! Server::validatePassword($this->arguments[0])) {
+            throw new AuthException('invalid password');
+        }
+
+        $this->request->connection()->authenticated = true;
+
+        return true;
     }
 }

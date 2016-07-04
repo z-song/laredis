@@ -99,12 +99,12 @@ class Route
      * Create a new Route instance.
      *
      * @param string $command
-     * @param string $uri
+     * @param string $key
      * @param \Closure|array $action
      */
-    public function __construct($command, $uri, $action)
+    public function __construct($command, $key, $action)
     {
-        $this->uri = $uri;
+        $this->key = $key;
         $this->command = $command;
         $this->action = $this->parseAction($action);
 
@@ -179,7 +179,7 @@ class Route
     {
         $this->compileRoute();
 
-        if (empty($this->uri)) {
+        if (empty($this->key)) {
             return true;
         }
 
@@ -197,10 +197,10 @@ class Route
     {
         $optionals = $this->extractOptionalParameters();
 
-        $uri = preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri);
+        $key = preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->key);
 
         $this->compiled = (
-        new SymfonyRoute($uri, $optionals, $this->wheres)
+        new SymfonyRoute($key, $optionals, $this->wheres)
         )->compile();
     }
 
@@ -211,7 +211,7 @@ class Route
      */
     protected function extractOptionalParameters()
     {
-        preg_match_all('/\{(\w+?)\?\}/', $this->uri, $matches);
+        preg_match_all('/\{(\w+?)\?\}/', $this->key, $matches);
 
         return isset($matches[1]) ? array_fill_keys($matches[1], null) : [];
     }
@@ -390,7 +390,7 @@ class Route
      */
     protected function compileParameterNames()
     {
-        preg_match_all('/\{(.*?)\}/', $this->uri, $matches);
+        preg_match_all('/\{(.*?)\}/', $this->key, $matches);
 
         return array_map(function ($m) {
             return trim($m, '?');
@@ -420,14 +420,14 @@ class Route
      */
     public function bindParameters(Request $request)
     {
-        // If the route has a regular expression for the host part of the URI, we will
+        // If the route has a regular expression for the host part of the key, we will
         // compile that and get the parameter matches for this domain. We will then
         // merge them into this parameters array so that this array is completed.
         $params = $this->matchToKeys(
             array_slice($this->bindPathParameters($request), 1)
         );
 
-        // If the route has a regular expression for the host part of the URI, we will
+        // If the route has a regular expression for the host part of the key, we will
         // compile that and get the parameter matches for this domain. We will then
         // merge them into this parameters array so that this array is completed.
         if (! is_null($this->compiled->getHostRegex())) {
@@ -441,7 +441,7 @@ class Route
     }
 
     /**
-     * Get the parameter matches for the path portion of the URI.
+     * Get the parameter matches for the path portion of the key.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array
@@ -519,10 +519,10 @@ class Route
     {
         // If no action is passed in right away, we assume the user will make use of
         // fluent routing. In that case, we set a default closure, to be executed
-        // if the user never explicitly sets an action to handle the given uri.
+        // if the user never explicitly sets an action to handle the given key.
         if (is_null($action)) {
             return ['uses' => function () {
-                throw new LogicException("Route for [{$this->uri}] has no action.");
+                throw new LogicException("Route for [{$this->key}] has no action.");
             }];
         }
 
@@ -619,59 +619,59 @@ class Route
     }
 
     /**
-     * Add a prefix to the route URI.
+     * Add a prefix to the route key.
      *
      * @param  string  $prefix
      * @return $this
      */
     public function prefix($prefix)
     {
-        $uri = rtrim($prefix, '/').'/'.ltrim($this->uri, '/');
+        $key = rtrim($prefix, '/').'/'.ltrim($this->key, '/');
 
-        $this->uri = trim($uri, '/');
+        $this->key = trim($key, '/');
 
         return $this;
     }
 
     /**
-     * Get the URI associated with the route.
+     * Get the key associated with the route.
      *
      * @return string
      */
     public function getPath()
     {
-        return $this->uri();
+        return $this->key();
     }
 
     /**
-     * Get the URI associated with the route.
+     * Get the key associated with the route.
      *
      * @return string
      */
-    public function uri()
+    public function key()
     {
-        return $this->uri;
+        return $this->key;
     }
 
     /**
-     * Get the URI that the route responds to.
+     * Get the key that the route responds to.
      *
      * @return string
      */
-    public function getUri()
+    public function getKey()
     {
-        return $this->uri;
+        return $this->key;
     }
 
     /**
-     * Set the URI that the route responds to.
+     * Set the key that the route responds to.
      *
-     * @param  string  $uri
+     * @param  string  $key
      * @return $this
      */
-    public function setUri($uri)
+    public function setKey($key)
     {
-        $this->uri = $uri;
+        $this->key = $key;
 
         return $this;
     }

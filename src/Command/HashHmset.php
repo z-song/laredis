@@ -8,13 +8,17 @@ class HashHmset extends Command implements RoutableInterface
         execute as traitExecute;
     }
 
+    protected $name = 'HMSET';
+
     protected $key = '';
 
     protected $sets = [];
 
+    protected $arity = -3;
+
     protected function validateArguments()
     {
-        return count($this->arguments) > 1;
+        return parent::validateArguments() && $this->arguments % 2 !== 0;
     }
 
     public function execute()

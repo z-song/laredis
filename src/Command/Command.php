@@ -7,11 +7,13 @@ use Encore\Redis\Routing\Request;
 
 abstract class Command
 {
+    protected $name = '';
+
     protected $arguments = [];
 
     protected $request;
 
-    protected $argumentCount = 0;
+    protected $arity = 0;
 
     public function __construct(Request $request)
     {
@@ -28,11 +30,22 @@ abstract class Command
 
     protected function validateArguments()
     {
-        return count($this->arguments) == $this->argumentCount;
+        if (($this->arity > 0 && $this->arity != count($this->arguments)) ||
+            count($this->arguments) < -$this->arity
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     public function execute()
     {
         return true;
+    }
+
+    public function name()
+    {
+        return $this->name;
     }
 }

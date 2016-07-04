@@ -49,6 +49,13 @@ class Redis
 
             'PUBLISH'   => PubSubPublish::class,
             'SUBSCRIBE' => PubSubSubscribe::class,
+
+            'SADD'      => SetSadd::class,
+            'SCARD'     => SetScard::class,
+            'SDIFF'     => SetSdiff::class,
+            'SISMEMBER' => SetSismember::class,
+            'SMEMBERS'  => SetSmembers::class,
+            'SREM'      => SetSrem::class,
         ];
     }
 

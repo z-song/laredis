@@ -6,5 +6,7 @@ class HashHkeys extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'HKEYS';
+
+    protected $arity = 1;
 }

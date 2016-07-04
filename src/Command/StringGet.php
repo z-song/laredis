@@ -6,5 +6,7 @@ class StringGet extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'GET';
+
+    protected $arity = 1;
 }

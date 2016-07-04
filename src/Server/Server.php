@@ -156,9 +156,16 @@ class Server
 
         // TcpConnection.
         $connection = new Connection($socket, $remoteAddress);
+        $connection->server = $this;
+
         $this->connections[$connection->id] = $connection;
     }
 
+    /**
+     * Close Connection.
+     *
+     * @param $id
+     */
     public function closeConnection($id)
     {
         unset($this->connections[$id]);
@@ -166,7 +173,7 @@ class Server
 
     protected static function isDaemonize()
     {
-        return isset($_SERVER['argv'][3]) && $_SERVER['argv'][3] == '-d';
+        return config('redis-server.daemonize') || (isset($_SERVER['argv'][3]) && $_SERVER['argv'][3] == '-d');
     }
 
     protected static function daemonize()
@@ -192,6 +199,25 @@ class Server
         } elseif (0 !== $pid) {
             exit(0);
         }
+    }
+
+    /**
+     * Server requires password.
+     *
+     * @return bool
+     */
+    public static function requirePass()
+    {
+        $passwords = (array) config('redis-server.password');
+
+        return ! empty($passwords);
+    }
+
+    public static function validatePassword($password)
+    {
+        $passwords  = (array) config('redis-server.password');
+
+        return in_array($password, $passwords);
     }
 
     public function __call($method, $arguments)

@@ -6,5 +6,7 @@ class PubSubPublish extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 2;
+    protected $name = 'PUBLISH';
+
+    protected $arity = 2;
 }

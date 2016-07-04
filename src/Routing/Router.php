@@ -3,12 +3,11 @@
 namespace Encore\Redis\Routing;
 
 use Closure;
-use Encore\Redis\Command\Commands;
-use Encore\Redis\Command\Redis;
-use Encore\Redis\Command\RoutableInterface;
-use Illuminate\Container\Container;
-use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Arr;
+use Encore\Redis\Command\Redis;
+use Illuminate\Routing\Pipeline;
+use Illuminate\Container\Container;
+use Encore\Redis\Command\RoutableInterface;
 use Encore\Redis\Exceptions\NotFoundRouteException;
 use Encore\Redis\Exceptions\NotFoundCommandException;
 
@@ -47,7 +46,7 @@ class Router
      *
      * @var array
      */
-    protected $routableDataTypes = ['string', 'hash', 'list', 'pubsub'];
+    protected $routableDataTypes = ['string', 'hash', 'list', 'pubsub', 'set'];
 
     /**
      * Create a new Router instance.
@@ -61,7 +60,22 @@ class Router
         $this->container = $container ?: new Container;
     }
 
-    public function addControllerRoute($uri, $controller)
+    /**
+     * Add command.
+     *
+     * @param $command
+     * @param $key
+     * @param $action
+     * @return $this
+     */
+    public function command($command, $key, $action)
+    {
+        $this->addRoute($command, $key, $action);
+
+        return $this;
+    }
+
+    public function addControllerRoute($key, $controller)
     {
         if (! empty($this->groupStack)) {
             $prepended = $this->prependGroupUses($controller);
@@ -71,12 +85,14 @@ class Router
 
         foreach ($routable as $command => $routes) {
             foreach ($routes as $route) {
-                $this->__call($command, [$uri, ['uses' => "$controller@$command"]]);
+
+                $this->addRoute($command, $key, "$controller@$command");
+                //$this->__call($command, [$key, ['uses' => "$controller@$command"]]);
             }
         }
     }
 
-    protected function addRoute($command, $uri, $action)
+    protected function addRoute($command, $key, $action)
     {
         if ($this->actionReferencesController($action)) {
             $action = $this->convertToControllerAction($action);
@@ -84,7 +100,7 @@ class Router
 
         $command = strtoupper($command);
 
-        $route = new Route($command, $uri, $action);
+        $route = new Route($command, $key, $action);
         $route->setRouter($this)->setContainer($this->container);
 
         if ($this->hasGroupStack()) {
@@ -480,11 +496,18 @@ class Router
             return call_user_func_array([$this, 'addControllerRoute'], $arguments);
         }
 
-        if (Redis::supports($method)) {
-            $this->addRoute($method, $arguments[0], $arguments[1]);
-        }
+//        if (Redis::supports($method)) {
+//            $this->addRoute($method, $arguments[0], $arguments[1]);
+//        }
     }
 
+    /**
+     * Prepares for the response.
+     *
+     * @param Request $request
+     * @param mixed $response
+     * @return Response
+     */
     public function prepareResponse(Request $request, $response)
     {
         if ($response instanceof Response) {

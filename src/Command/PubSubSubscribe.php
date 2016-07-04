@@ -6,7 +6,9 @@ class PubSubSubscribe extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'SUBSCRIBE';
+
+    protected $arity = 1;
 
 //    public function execute()
 //    {

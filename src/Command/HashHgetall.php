@@ -6,5 +6,7 @@ class HashHgetall extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 1;
+    protected $name = 'HGETALL';
+
+    protected $arity = 1;
 }

@@ -4,7 +4,9 @@ namespace Encore\Redis\Command;
 
 class ConnectionEcho extends Command
 {
-    protected $argumentCount = 1;
+    protected $name = 'ECHO';
+
+    protected $arity = 1;
 
     public function execute()
     {

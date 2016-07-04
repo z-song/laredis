@@ -6,5 +6,7 @@ class ListLrange extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 3;
+    protected $name = 'LRANGE';
+
+    protected $arity = 3;
 }

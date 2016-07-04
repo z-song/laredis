@@ -6,5 +6,7 @@ class HashHset extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 3;
+    protected $name = 'HSET';
+
+    protected $arity = 3;
 }

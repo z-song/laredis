@@ -8,10 +8,9 @@ class HashHmget extends Command implements RoutableInterface
         execute as traitExecute;
     }
 
-    protected function validateArguments()
-    {
-        return count($this->arguments) > 1;
-    }
+    protected $name = 'HMGET';
+
+    protected $arity = -2;
 
     public function execute()
     {

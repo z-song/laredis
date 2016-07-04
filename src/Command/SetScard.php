@@ -2,11 +2,11 @@
 
 namespace Encore\Redis\Command;
 
-class HashHlen extends Command implements RoutableInterface
+class SetScard extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $name = 'HLEN';
+    protected $name = 'SCARD';
 
     protected $arity = 1;
 }

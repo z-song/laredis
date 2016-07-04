@@ -6,5 +6,7 @@ class HashHget extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $argumentCount = 2;
+    protected $name = 'HGET';
+
+    protected $arity = 2;
 }

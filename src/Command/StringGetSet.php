@@ -8,7 +8,9 @@ class StringGetSet extends Command implements RoutableInterface
         execute as traitExecute;
     }
 
-    protected $argumentCount = 2;
+    protected $name = 'GETSET';
+
+    protected $arity = 2;
 
     public function execute()
     {

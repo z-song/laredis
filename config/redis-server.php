@@ -2,9 +2,11 @@
 
 return [
 
-    'auth' => [
-        'guard' => 'config',
-    ],
+//    'auth' => [
+//        'guard' => 'config',
+//    ],
+
+    'daemonize' => false,
 
     /*'guards' => [
         'config' => [

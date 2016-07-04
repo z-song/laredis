@@ -6,8 +6,12 @@ class StringSet extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
+    protected $name = 'SET';
+
+    protected $arity = -2;
+
     protected function validateArguments()
     {
-        return count($this->arguments) > 1;
+        return parent::validateArguments() && count($this->arguments) % 2 !== 0;
     }
 }

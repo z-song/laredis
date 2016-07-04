@@ -2,8 +2,6 @@
 
 namespace Encore\Redis\Routing;
 
-use Encore\Redis\Auth\AuthManager;
-
 class Request
 {
     protected $command = '';
@@ -65,10 +63,10 @@ class Request
         return $this->connection;
     }
 
-    public function authenticated()
-    {
-        return AuthManager::check($this->connection);
-    }
+//    public function authenticated()
+//    {
+//        return AuthManager::check($this->connection);
+//    }
 
     public function isCommand($command)
     {
