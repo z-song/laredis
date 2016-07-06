@@ -1,13 +1,28 @@
 <?php
 
-namespace Encore\Redis\Server;
+namespace Encore\Laredis\Server;
+
+use Monolog\Handler\StreamHandler;
 
 class Server
 {
+
+    const VERSION = '0.1';
+
     /**
      * @var null|string
      */
     public $socketName = '';
+
+    /**
+     * @var string
+     */
+    public $ip;
+
+    /**
+     * @var string
+     */
+    public $port;
 
     /**
      * Context of socket.
@@ -56,14 +71,22 @@ class Server
         $this->socketName = $socketName;
         $this->context = stream_context_create($contextOption);
 
-        static::init();
+        $components = parse_url($socketName);
+
+        $this->ip   = $components['host'];
+        $this->port = $components['port'];
+
+        $this->init();
     }
 
-    public static function init()
+    public function init()
     {
+        app('log')->useFiles(config('laredis.logFile'));
+        app('log')->getMonolog()->pushHandler(new StreamHandler('php://stdout'));
+
         // Pid file.
-        if (empty(self::$pidFile)) {
-            self::$pidFile = sys_get_temp_dir() . "/laravel-redis.pid";
+        if (empty(static::$pidFile)) {
+            static::$pidFile = sys_get_temp_dir() . "/laravel-redis.pid";
         }
     }
 
@@ -92,12 +115,14 @@ class Server
 
     public function start()
     {
-        echo "Service starting ...\r\n";
+        app('log')->info("Service starting ...");
 
         static::daemonize();
 
         $this->savePid();
         $this->listen();
+
+        Logo::display(static::VERSION, $this->ip, $this->port, self::$pid);
 
         //static::$eventLoop = new EventLoop();
         static::$eventLoop = new Libevent();
@@ -106,6 +131,9 @@ class Server
         static::$eventLoop->loop();
     }
 
+    /**
+     * @throws Exception
+     */
     protected function savePid()
     {
         self::$pid = posix_getpid();
@@ -119,7 +147,7 @@ class Server
      */
     public function stop()
     {
-        echo "Service stopping ...\r\n";
+        app('log')->info("Service stopping ...");
 
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGINT");
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGKILL");
@@ -133,7 +161,7 @@ class Server
         $this->stop();
         usleep(500);
 
-        echo "Service starting ...\r\n";
+        app('log')->info("Service starting ...");
         exec("php ".base_path('artisan')." redis-server start -d > /dev/null &");
 
         exit();
@@ -173,7 +201,7 @@ class Server
 
     protected static function isDaemonize()
     {
-        return config('redis-server.daemonize') || (isset($_SERVER['argv'][3]) && $_SERVER['argv'][3] == '-d');
+        return config('laredis.daemonize') || in_array('-d', $_SERVER['argv']);
     }
 
     protected static function daemonize()
@@ -208,14 +236,14 @@ class Server
      */
     public static function requirePass()
     {
-        $passwords = (array) config('redis-server.password');
+        $passwords = (array) config('laredis.password');
 
         return ! empty($passwords);
     }
 
     public static function validatePassword($password)
     {
-        $passwords  = (array) config('redis-server.password');
+        $passwords  = (array) config('laredis.password');
 
         return in_array($password, $passwords);
     }
@@ -223,10 +251,5 @@ class Server
     public function __call($method, $arguments)
     {
         exit("Usage: php artisan {start|stop|restart}\n");
-    }
-
-    public static function log()
-    {
-        call_user_func_array('dump', func_get_args());
     }
 }

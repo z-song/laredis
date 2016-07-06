@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class ListLrange extends Command implements RoutableInterface
+class ListRange extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

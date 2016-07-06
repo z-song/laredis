@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class StringGet extends Command implements RoutableInterface
 {

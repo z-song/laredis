@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class StringGetSet extends Command implements RoutableInterface
 {
@@ -12,7 +12,7 @@ class StringGetSet extends Command implements RoutableInterface
 
     protected $arity = 2;
 
-    public function execute()
+    public function process()
     {
         $key = $this->arguments[0];
         $getRequest = clone $this->request;

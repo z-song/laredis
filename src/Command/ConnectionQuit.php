@@ -1,12 +1,12 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class ConnectionQuit extends Command
 {
     protected $name = 'QUIT';
 
-    public function execute()
+    public function process()
     {
         return true;
     }

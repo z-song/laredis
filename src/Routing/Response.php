@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Routing;
+namespace Encore\Laredis\Routing;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
@@ -8,9 +8,10 @@ use Illuminate\Support\Arr;
 
 class Response implements Renderable
 {
-    const ERR = 0;
 
+    const ERR = 0;
     const OK  = 1;
+    const STATUS  = 2;
 
     protected $value;
 
@@ -37,7 +38,12 @@ class Response implements Renderable
             $message = " $message";
         }
 
-        return "-Error$message\r\n";
+        return "-Err$message\r\n";
+    }
+
+    protected function status()
+    {
+        return "+{$this->value}\r\n";
     }
 
     protected function ok()
@@ -95,10 +101,19 @@ class Response implements Renderable
         return $output;
     }
 
+    public function isError()
+    {
+        return $this->status == static::ERR;
+    }
+
     public function render()
     {
         if ($this->status == static::ERR) {
             return $this->error();
+        }
+
+        if ($this->status == static::STATUS) {
+            return $this->status();
         }
 
         return $this->encode($this->value);

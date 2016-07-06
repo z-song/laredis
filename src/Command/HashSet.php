@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class HashHset extends Command implements RoutableInterface
+class HashSet extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

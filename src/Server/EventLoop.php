@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Server;
+namespace Encore\Laredis\Server;
 
 class EventLoop
 {

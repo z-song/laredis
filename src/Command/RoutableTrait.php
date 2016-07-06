@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-use Encore\Redis\Routing\Router;
+use Encore\Laredis\Routing\Router;
 
 trait RoutableTrait
 {
@@ -22,9 +22,9 @@ trait RoutableTrait
     /**
      * @param null $request
      * @return mixed
-     * @throws \Encore\Redis\Exceptions\NotFoundRouteException
+     * @throws \Encore\Laredis\Exceptions\NotFoundRouteException
      */
-    public function execute($request = null)
+    public function process($request = null)
     {
         $request = $request ?: $this->request;
 

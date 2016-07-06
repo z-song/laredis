@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Console;
+namespace Encore\Laredis\Console;
 
-use Encore\Redis\Server\Server;
+use Encore\Laredis\Server\Server;
 use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;

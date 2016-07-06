@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class SetScard extends Command implements RoutableInterface
+class SetCard extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

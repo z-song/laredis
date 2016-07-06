@@ -1,15 +1,15 @@
 <?php
 
-namespace Encore\Redis\Routing;
+namespace Encore\Laredis\Routing;
 
 use Closure;
 use Illuminate\Support\Arr;
-use Encore\Redis\Command\Redis;
+use Encore\Laredis\Command\Redis;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Container\Container;
-use Encore\Redis\Command\RoutableInterface;
-use Encore\Redis\Exceptions\NotFoundRouteException;
-use Encore\Redis\Exceptions\NotFoundCommandException;
+use Encore\Laredis\Command\RoutableInterface;
+use Encore\Laredis\Exceptions\NotFoundRouteException;
+use Encore\Laredis\Exceptions\NotFoundCommandException;
 
 class Router
 {
@@ -327,7 +327,7 @@ class Router
             $command->setRouter($this);
         }
 
-        return $this->prepareResponse($request, $command->execute());
+        return $this->prepareResponse($request, $command->process());
     }
 
     /**
@@ -486,7 +486,7 @@ class Router
         }
 
         if ($throwException) {
-            throw new NotFoundRouteException($request->path());
+            throw new NotFoundRouteException($request->key());
         }
     }
 

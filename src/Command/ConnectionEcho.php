@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class ConnectionEcho extends Command
 {
@@ -8,7 +8,7 @@ class ConnectionEcho extends Command
 
     protected $arity = 1;
 
-    public function execute()
+    public function process()
     {
         return (string) $this->arguments[0];
     }

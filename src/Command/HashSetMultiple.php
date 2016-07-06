@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class HashHmset extends Command implements RoutableInterface
+class HashSetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait {
         execute as traitExecute;
@@ -21,7 +21,7 @@ class HashHmset extends Command implements RoutableInterface
         return parent::validateArguments() && $this->arguments % 2 !== 0;
     }
 
-    public function execute()
+    public function process()
     {
         $this->key = $this->arguments[0];
 

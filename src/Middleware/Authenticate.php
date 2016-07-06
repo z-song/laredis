@@ -1,11 +1,11 @@
 <?php
 
-namespace Encore\Redis\Middleware;
+namespace Encore\Laredis\Middleware;
 
 use Closure;
-use Encore\Redis\Server\Server;
-use Encore\Redis\Routing\Request;
-use Encore\Redis\Exceptions\AuthException;
+use Encore\Laredis\Server\Server;
+use Encore\Laredis\Routing\Request;
+use Encore\Laredis\Exceptions\AuthException;
 
 class Authenticate
 {

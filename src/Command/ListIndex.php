@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class ListLindex extends Command implements RoutableInterface
+class ListIndex extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

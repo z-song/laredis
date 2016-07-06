@@ -1,12 +1,12 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class ServerTime extends Command
 {
     protected $name = 'TIME';
 
-    public function execute()
+    public function process()
     {
         list($microseconds, $timestamp) = explode(' ', microtime());
 

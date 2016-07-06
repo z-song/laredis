@@ -1,10 +1,10 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-use Encore\Redis\Routing\Response;
+use Encore\Laredis\Routing\Response;
 
-class StringMget extends Command implements RoutableInterface
+class StringGetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -12,7 +12,7 @@ class StringMget extends Command implements RoutableInterface
 
     protected $arity = -1;
 
-    public function execute()
+    public function process()
     {
         $result = [];
 

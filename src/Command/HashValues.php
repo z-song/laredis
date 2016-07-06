@@ -2,11 +2,11 @@
 
 namespace Encore\Laredis\Command;
 
-class StringStrlen extends Command implements RoutableInterface
+class HashValues extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
-    protected $name = 'STRLEN';
+    protected $name = 'HVALS';
 
     protected $arity = 1;
 }

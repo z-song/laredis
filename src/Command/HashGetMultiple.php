@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class HashHmget extends Command implements RoutableInterface
+class HashGetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait {
         execute as traitExecute;
@@ -12,7 +12,7 @@ class HashHmget extends Command implements RoutableInterface
 
     protected $arity = -2;
 
-    public function execute()
+    public function process()
     {
         $parameters = [$this->arguments[0], array_slice($this->arguments, 1)];
 
@@ -21,13 +21,13 @@ class HashHmget extends Command implements RoutableInterface
         $route = $this->router->findRoute($this->request, false);
 
         if (is_null($route)) {
-            return $this->runBatchHget();
+            return $this->getMultiple();
         }
 
         return $this->router->runRouteWithinStack($route, $this->request);
     }
 
-    protected function runBatchHget()
+    protected function getMultiple()
     {
         $key = $this->arguments[0];
         $result = [];

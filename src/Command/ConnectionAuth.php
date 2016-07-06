@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-use Encore\Redis\Exceptions\AuthException;
-use Encore\Redis\Server\Server;
+use Encore\Laredis\Exceptions\AuthException;
+use Encore\Laredis\Server\Server;
 
 class ConnectionAuth extends Command
 {
@@ -11,7 +11,7 @@ class ConnectionAuth extends Command
 
     protected $arity = 1;
 
-    public function execute()
+    public function process()
     {
         if (! Server::requirePass()) {
             throw new AuthException('Client sent AUTH, but no password is set');

@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class SetSmembers extends Command implements RoutableInterface
+class SetMembers extends Command implements RoutableInterface
 {
     use RoutableTrait;
 

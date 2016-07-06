@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class StringMset extends Command implements RoutableInterface
+class StringSetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -15,7 +15,7 @@ class StringMset extends Command implements RoutableInterface
         return parent::validateArguments() && count($this->arguments)%2 !== 0 ;
     }
 
-    public function execute()
+    public function process()
     {
         $chunks = array_chunk($this->request->parameters(), 2);
 

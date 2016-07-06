@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 class PubSubSubscribe extends Command implements RoutableInterface
 {
@@ -10,7 +10,7 @@ class PubSubSubscribe extends Command implements RoutableInterface
 
     protected $arity = 1;
 
-//    public function execute()
+//    public function process()
 //    {
 //        return function () {
 //            for ($i = 1; $i <= 10; $i++) {

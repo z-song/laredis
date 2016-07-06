@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis;
+namespace Encore\Laredis;
 
-use Encore\Redis\Routing\Router;
+use Encore\Laredis\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class ServerServiceProvider extends ServiceProvider
@@ -11,6 +11,21 @@ class ServerServiceProvider extends ServiceProvider
         'ServeCommand'
     ];
 
+    /**
+     * Boot the service provider.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php'),], 'laredis');
+    }
+
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->registerRouter();
@@ -28,7 +43,7 @@ class ServerServiceProvider extends ServiceProvider
 
             $router = new Router($app);
 
-            foreach (config('redis-server.middleware') as $name => $class) {
+            foreach ((array) config('laredis.middleware') as $name => $class) {
                 $router->middleware($name, $class);
             }
 
@@ -44,7 +59,7 @@ class ServerServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         foreach ($this->commands as $command) {
-            $this->commands('Encore\Redis\Console\\' . $command);
+            $this->commands('Encore\Laredis\Console\\' . $command);
         }
     }
 }

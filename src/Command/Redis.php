@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-use Encore\Redis\Exceptions\NotFoundCommandException;
+use Encore\Laredis\Exceptions\NotFoundCommandException;
 
 class Redis
 {
@@ -26,36 +26,41 @@ class Redis
             'SET'       => StringSet::class,
             'GETSET'    => StringGetSet::class,
             'STRLEN'    => StringStrlen::class,
-            'MGET'      => StringMget::class,
-            'MSET'      => StringMset::class,
+            'MGET'      => StringGetMultiple::class,
+            'MSET'      => StringSetMultiple::class,
 
-            'DEL'       => KeyDel::class,
+            'DEL'       => KeyDelete::class,
             'EXISTS'    => KeyExists::class,
             //'KEYS'      => KeyKeys::class,
 
-            'HGET'      => HashHget::class,
-            'HSET'      => HashHset::class,
-            'HGETALL'   => HashHgetall::class,
-            'HVALS'     => HashHvals::class,
-            'HKEYS'     => HashHkeys::class,
-            'HDEL'      => HashHdel::class,
-            'HLEN'      => HashHlen::class,
-            'HMGET'     => HashHmget::class,
-            'HMSET'     => HashHmset::class,
+            'HGET'      => HashGet::class,
+            'HSET'      => HashSet::class,
+            'HGETALL'   => HashGetAll::class,
+            'HVALS'     => HashValues::class,
+            'HKEYS'     => HashKeys::class,
+            'HDEL'      => HashDelete::class,
+            'HLEN'      => HashLength::class,
+            'HMGET'     => HashGetMultiple::class,
+            'HMSET'     => HashSetMultiple::class,
 
-            'LINDEX'    => ListLindex::class,
-            'LRANGE'    => ListLrange::class,
-            'LLEN'      => ListLlen::class,
+            'LINDEX'    => ListIndex::class,
+            'LRANGE'    => ListRange::class,
+            'LLEN'      => ListLength::class,
 
             'PUBLISH'   => PubSubPublish::class,
             'SUBSCRIBE' => PubSubSubscribe::class,
 
-            'SADD'      => SetSadd::class,
-            'SCARD'     => SetScard::class,
-            'SDIFF'     => SetSdiff::class,
-            'SISMEMBER' => SetSismember::class,
-            'SMEMBERS'  => SetSmembers::class,
-            'SREM'      => SetSrem::class,
+            'SADD'      => SetAdd::class,
+            'SCARD'     => SetCard::class,
+            'SDIFF'     => SetDifference::class,
+            'SISMEMBER' => SetIsMember::class,
+            'SMEMBERS'  => SetMembers::class,
+            'SREM'      => SetRemove::class,
+            'SRANDMEMBER' => SetRandomMember::class,
+
+            'MULTI'     => TransactionMulti::class,
+            'EXEC'      => TransactionExec::class,
+            'DISCARD'   => TransactionDiscard::class,
         ];
     }
 

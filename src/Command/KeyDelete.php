@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class KeyDel extends Command implements RoutableInterface
+class KeyDelete extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -10,7 +10,7 @@ class KeyDel extends Command implements RoutableInterface
 
     protected $arity = -1;
 
-    public function execute()
+    public function process()
     {
         $success = 0;
 

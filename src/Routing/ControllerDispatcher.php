@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Routing;
+namespace Encore\Laredis\Routing;
 
 use Illuminate\Routing\Pipeline;
 use Illuminate\Routing\RouteDependencyResolverTrait;

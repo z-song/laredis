@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-class HashHdel extends Command implements RoutableInterface
+class HashDelete extends Command implements RoutableInterface
 {
     use RoutableTrait;
 
@@ -10,7 +10,7 @@ class HashHdel extends Command implements RoutableInterface
 
     protected $arity = -1;
 
-    public function execute()
+    public function process()
     {
         $parameters = [$this->arguments[0], array_slice($this->arguments, 1)];
 

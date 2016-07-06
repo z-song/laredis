@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Redis\Routing;
+namespace Encore\Laredis\Routing;
 
-use Encore\Redis\Command\Redis;
+use Encore\Laredis\Command\Redis;
 use ReflectionClass;
 use ReflectionMethod;
 

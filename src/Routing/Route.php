@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Routing;
+namespace Encore\Laredis\Routing;
 
 use Closure;
 use LogicException;
@@ -183,7 +183,7 @@ class Route
             return true;
         }
 
-        $path = $request->path() == '/' ? '/' : '/'.$request->path();
+        $path = $request->key() == '/' ? '/' : '/'.$request->key();
 
         return preg_match($this->getCompiled()->getRegex(), rawurldecode($path));
     }
@@ -448,7 +448,7 @@ class Route
      */
     protected function bindPathParameters(Request $request)
     {
-        preg_match($this->compiled->getRegex(), '/'.$request->decodedPath(), $matches);
+        preg_match($this->compiled->getRegex(), '/'.$request->decodedKey(), $matches);
 
         return $matches;
     }
@@ -633,15 +633,6 @@ class Route
         return $this;
     }
 
-    /**
-     * Get the key associated with the route.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->key();
-    }
 
     /**
      * Get the key associated with the route.

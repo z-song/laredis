@@ -1,13 +1,15 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
+
+use Encore\Laredis\Routing\Response;
 
 class ConnectionPing extends Command
 {
     protected $name = 'PING';
 
-    public function execute()
+    public function process()
     {
-        return 'PONG';
+        return new Response('PONG', Response::STATUS);
     }
 }

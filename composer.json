@@ -1,9 +1,9 @@
 {
-    "name": "encore/redis-server",
-    "description": "redis server",
+    "name": "encore/laredis",
+    "description": "redis server based on laravel/lumen",
     "type": "library",
     "keywords": ["laravel", "redis", "server"],
-    "homepage": "https://github.com/z-song/redis-server",
+    "homepage": "https://github.com/z-song/laredis",
     "license": "MIT",
     "authors": [
         {

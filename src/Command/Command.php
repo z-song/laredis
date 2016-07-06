@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
 use InvalidArgumentException;
-use Encore\Redis\Routing\Request;
+use Encore\Laredis\Routing\Request;
 
 abstract class Command
 {
@@ -39,7 +39,7 @@ abstract class Command
         return true;
     }
 
-    public function execute()
+    public function process()
     {
         return true;
     }

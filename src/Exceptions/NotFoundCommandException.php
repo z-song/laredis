@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Redis\Exceptions;
+namespace Encore\Laredis\Exceptions;
 
 use Exception;
 

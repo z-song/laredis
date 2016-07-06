@@ -1,12 +1,12 @@
 <?php
 
-namespace Encore\Redis\Command;
+namespace Encore\Laredis\Command;
 
-use Encore\Redis\Routing\Router;
+use Encore\Laredis\Routing\Router;
 
 interface RoutableInterface
 {
     public function setRouter(Router $router);
 
-    public function execute();
+    public function process();
 }
