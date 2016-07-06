@@ -18,7 +18,7 @@ class Router
      *
      * @var array
      */
-    protected $routes;
+    protected $routes = [];
 
     /**
      * The IoC container instance.
