@@ -46,7 +46,7 @@ class Router
      *
      * @var array
      */
-    protected $routableDataTypes = ['string', 'hash', 'list', 'pubsub', 'set'];
+    protected $routableDataTypes = ['string', 'hash', 'list', 'set'];
 
     /**
      * Create a new Router instance.
