@@ -136,7 +136,7 @@ class Connection
                 $response = app('redis.router')->dispatch($request);
             }
 
-        }  catch (Exception $e) {
+        } catch (Exception $e) {
             $response = $this->handleException($e);
         }
 
@@ -200,11 +200,13 @@ class Connection
             $response = new Response(null);
         } catch (NotFoundCommandException $e) {
             $response = new Response(
-                "unsupported command '{$e->getMessage()}'", Response::ERR
+                "unsupported command '{$e->getMessage()}'",
+                Response::ERR
             );
         } catch (InvalidArgumentException $e) {
             $response = new Response(
-                "wrong number of arguments for '{$e->getMessage()}' command", Response::ERR
+                "wrong number of arguments for '{$e->getMessage()}' command",
+                Response::ERR
             );
         } catch (Exception $e) {
             $response = new Response($e->getMessage(), Response::ERR);
