@@ -18,7 +18,12 @@ class ServerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php'),], 'laredis');
+        if (function_exists('config_path')) {
+            $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php'),], 'laredis');
+        } else {
+            $config = require __DIR__ . '/../config/laredis.php';dd($config);
+            config(['laredis' => $config]);
+        }
     }
 
     /**
