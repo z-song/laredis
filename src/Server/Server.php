@@ -2,9 +2,12 @@
 
 namespace Encore\Laredis\Server;
 
+
+use Encore\Laredis\Server\EventLoop\Select;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Encore\Laredis\Server\EventLoop\Libevent;
 
 class Server
 {
@@ -132,11 +135,24 @@ class Server
 
         Logo::display(static::VERSION, $this->ip, $this->port, self::$pid);
 
-        //static::$eventLoop = new EventLoop();
-        static::$eventLoop = new Libevent();
+        static::$eventLoop = $this->eventLoop();
 
         static::$eventLoop->add($this->server, EventLoop::EV_READ, [$this, 'acceptConnection']);
         static::$eventLoop->loop();
+    }
+
+    /**
+     * Get eventloop
+     *
+     * @return Libevent|Select
+     */
+    protected function eventLoop()
+    {
+        if (extension_loaded('libevent')) {
+            return new Libevent();
+        }
+
+        return new Select();
     }
 
     /**
