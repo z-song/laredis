@@ -9,10 +9,14 @@
 composer require encore/laredis "dev-master"
 ```
 
-在`config/app.php`加入`ServerServiceProvider`:
-
+在`laravel`框架中，在`config/app.php`加入:
 ```
 Encore\Laredis\ServerServiceProvider::class,
+```
+
+在`Lumen`框架中，在`bootstrap/app.php`中加入：
+```
+$app->register(Encore\Laredis\ServerServiceProvider::class);
 ```
 
 运行下面的命令完成安装：
