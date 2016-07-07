@@ -48,13 +48,8 @@ class ServerServiceProvider extends ServiceProvider
         $this->app['redis.router'] = $this->app->share(function ($app) {
 
             $routerClass = $this->getRouterClass();
-            $router = new $routerClass($app);
 
-            foreach ((array) config('laredis.middleware') as $name => $class) {
-                $router->middleware($name, $class);
-            }
-
-            return $router;
+            return new $routerClass($app);
         });
     }
 

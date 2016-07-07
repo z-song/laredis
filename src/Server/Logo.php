@@ -26,7 +26,7 @@ class Logo
           `-._        _.-'      https://github.com/z-song/laredis
               `-.__.-'
 
-EOT;
 
+EOT;
     }
 }

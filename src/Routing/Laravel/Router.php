@@ -51,20 +51,32 @@ class Router
     /**
      * Routable data types.
      *
-     * @var array`
+     * @var array
      */
     protected $routableDataTypes = ['string', 'hash', 'list', 'set'];
 
     /**
      * Create a new Router instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @param  \Illuminate\Container\Container  $container
-     * @return void
+     * @param Container $container
      */
     public function __construct(Container $container = null)
     {
         $this->container = $container ?: new Container;
+
+        $this->loadMiddleware();
+    }
+
+    /**
+     * Load middleware.
+     *
+     * @return void
+     */
+    public function loadMiddleware()
+    {
+        foreach ((array) config('laredis.middleware') as $name => $middleware) {
+            $this->middleware($name, $middleware);
+        }
     }
 
     /**
@@ -123,7 +135,7 @@ class Router
     /**
      * Merge the group stack with the controller action.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param  Route  $route
      * @return void
      */
     protected function mergeGroupAttributesIntoRoute($route)
@@ -332,14 +344,14 @@ class Router
             $command->setRouter($this);
         }
 
-        return $this->prepareResponse($request, $command->process());
+        return $this->prepareResponse($command->process());
     }
 
     /**
      * Run the given route within a Stack "onion" instance.
      *
-     * @param  \Illuminate\Routing\Route  $route
-     * @param  \Illuminate\Http\Request  $request
+     * @param Route $route
+     * @param Request $request
      * @return mixed
      */
     public function runRouteWithinStack(Route $route, Request $request)
@@ -358,9 +370,23 @@ class Router
     }
 
     /**
+     * Send request.
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws NotFoundRouteException
+     */
+    public function send(Request $request)
+    {
+        $route = $this->findRoute($request);
+
+        return $this->runRouteWithinStack($route, $request);
+    }
+
+    /**
      * Gather the middleware for the given route.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param  Route  $route
      * @return array
      */
     public function gatherRouteMiddlewares(Route $route)
@@ -505,11 +531,10 @@ class Router
     /**
      * Prepares for the response.
      *
-     * @param Request $request
      * @param mixed $response
      * @return Response
      */
-    public function prepareResponse(Request $request, $response)
+    public function prepareResponse($response)
     {
         if ($response instanceof Response) {
             return $response;

@@ -79,7 +79,7 @@ class Route
     /**
      * The router instance used by the route.
      *
-     * @var \Illuminate\Routing\Router
+     * @var Router
      */
     protected $router;
 
@@ -151,7 +151,7 @@ class Route
 
         $result = call_user_func_array($this->action['uses'], $parameters);
 
-        return $this->router->prepareResponse($request, $result);
+        return $this->router->prepareResponse($result);
     }
 
     /**
@@ -245,7 +245,8 @@ class Route
     /**
      * Get the parameters that are listed in the route / controller signature.
      *
-     * @return array
+     * @param null $subClass
+     * @return array|\ReflectionParameter[]
      */
     public function signatureParameters($subClass = null)
     {
@@ -429,16 +430,6 @@ class Route
             array_slice($this->bindPathParameters($request), 1)
         );
 
-        // If the route has a regular expression for the host part of the key, we will
-        // compile that and get the parameter matches for this domain. We will then
-        // merge them into this parameters array so that this array is completed.
-        if (! is_null($this->compiled->getHostRegex())) {
-            $params = $this->bindHostParameters(
-                $request,
-                $params
-            );
-        }
-
         return $this->parameters = $this->replaceDefaults($params);
     }
 
@@ -453,20 +444,6 @@ class Route
         preg_match($this->compiled->getRegex(), '/'.$request->decodedKey(), $matches);
 
         return $matches;
-    }
-
-    /**
-     * Extract the parameter list from the host part of the request.
-     *
-     * @param  \Encore\Laredis\Routing\Request  $request
-     * @param  array  $parameters
-     * @return array
-     */
-    protected function bindHostParameters(Request $request, $parameters)
-    {
-        preg_match($this->compiled->getHostRegex(), $request->getHost(), $matches);
-
-        return array_merge($this->matchToKeys(array_slice($matches, 1)), $parameters);
     }
 
     /**
@@ -642,16 +619,6 @@ class Route
      * @return string
      */
     public function key()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Get the key that the route responds to.
-     *
-     * @return string
-     */
-    public function getKey()
     {
         return $this->key;
     }

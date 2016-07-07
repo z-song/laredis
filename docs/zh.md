@@ -1,6 +1,6 @@
 # laredis
 
-使用`Laredis`将你的`laravel`应用变成redis服务器.
+使用`Laredis`将你的`laravel`/`Lumen`应用变成redis服务器.
 
 
 ##安装
@@ -84,13 +84,16 @@ PONG
 
 ```
 
-##使用控制器来处理请求
+##Laravel路由
 
+在laravel框架中使用`string()`、`set()`、`hash()`、`list()`四个方法来将请求映射控制器对应的方法中：
 
 ```
 // in routes.php
 $router->string('users:{id}:{key}', UserController::class);
 $router->set('users:{id}:friends', FriendController::class);
+//$router->hash('article:{id}', ArticleController::class);
+//$router->list('users:{id}:books', BookController::class);
 
 // in UserController.php
 
@@ -155,7 +158,21 @@ public function scard($id)
 }
 ```
 
-##目前支持以下命令
+##Lumen路由
+
+在lumen框架中使用命令作为路由方法来定义路由：
+
+```
+$router->get('users:{id}:{key}', 'UserController@get');
+
+$router->set('users:{id}:{key}', 'UserController@set');
+
+$router->hgetall('users:{id}',   'UserController@hgetall');
+
+$router->hget('users:{id}:{key}',   'UserController@hget');
+```
+
+##目前支持的命令
 
 + AUTH
 + ECHO
@@ -204,3 +221,4 @@ public function scard($id)
 #License
 
 [WTFPL](http://www.wtfpl.net/)
+

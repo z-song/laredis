@@ -1,6 +1,6 @@
 # laredis
 
-Laredis can help you to make your laravel application become a redis server.
+Laredis can help you to make your `Laravel`/`Lumen` application become a redis server.
 
 [中文文档](/docs/zh.md)
 
@@ -10,10 +10,14 @@ Laredis can help you to make your laravel application become a redis server.
 composer require encore/laredis "dev-master"
 ```
 
-Add `ServerServiceProvider` to `config/app.php`:
-
+For laravel add `ServerServiceProvider` to `config/app.php`:
 ```
 Encore\Laredis\ServerServiceProvider::class,
+```
+
+For lumen in `bootstrap/app.php` add 
+```
+$app->register(Encore\Laredis\ServerServiceProvider::class);
 ```
 
 Then run these commands to finish installation:
@@ -34,7 +38,7 @@ app('redis.router')->group([
 
         $user = \App\User::findOrFail($id);
 
-        return $user->$key;
+        return $user->$key;`
     });
 
     $router->command('hgetall', 'users:{id}', function ($id) {
@@ -85,13 +89,16 @@ PONG
 
 ```
 
-##Use controller to handle requests.
+##Laravel Routing
 
 
+In laravel use methods `string()` `set()` `hash()` `list()` to map request to controller method.
 ```
 // in routes.php
 $router->string('users:{id}:{key}', UserController::class);
 $router->set('users:{id}:friends', FriendController::class);
+//$router->hash('article:{id}', ArticleController::class);
+//$router->list('users:{id}:books', BookController::class);
 
 // in UserController.php
 
@@ -154,6 +161,20 @@ public function scard($id)
 
     return $user->friends()->count();
 }
+```
+
+##Lumen Routing
+
+In lumen use command name as method name to route your request.
+
+```
+$router->get('users:{id}:{key}', 'UserController@get');
+
+$router->set('users:{id}:{key}', 'UserController@set');
+
+$router->hgetall('users:{id}',   'UserController@hgetall');
+
+$router->hget('users:{id}:{key}',   'UserController@hget');
 ```
 
 ##Supported commands

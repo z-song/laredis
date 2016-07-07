@@ -5,7 +5,7 @@ namespace Encore\Laredis\Command;
 trait RoutableTrait
 {
     /**
-     * @var
+     * @var \Encore\Laredis\Routing\Laravel\Router
      */
     protected $router;
 
@@ -26,8 +26,6 @@ trait RoutableTrait
     {
         $request = $request ?: $this->request;
 
-        $route = $this->router->findRoute($request);
-
-        return $this->router->runRouteWithinStack($route, $request);
+        return $this->router->send($request);
     }
 }

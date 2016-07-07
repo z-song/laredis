@@ -2,6 +2,8 @@
 
 namespace Encore\Laredis\Server;
 
+use Exception;
+use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 class Server
@@ -61,6 +63,11 @@ class Server
     protected static $pid = null;
 
     /**
+     * @var Logger
+     */
+    public static $logger = null;
+
+    /**
      * Create a instance of Server
      *
      * @param string $socketName
@@ -81,8 +88,9 @@ class Server
 
     public function init()
     {
-        app('log')->useFiles(config('laredis.logFile'));
-        app('log')->getMonolog()->pushHandler(new StreamHandler('php://stdout'));
+        static::$logger = new Logger('laredis');
+        static::$logger->pushHandler(new StreamHandler(config('laredis.logFile')));
+        static::$logger->pushHandler(new StreamHandler('php://stdout'));
 
         // Pid file.
         if (empty(static::$pidFile)) {
@@ -115,7 +123,7 @@ class Server
 
     public function start()
     {
-        app('log')->info("Service starting ...");
+        static::$logger->info("Service starting ...");
 
         static::daemonize();
 
@@ -147,7 +155,7 @@ class Server
      */
     public function stop()
     {
-        app('log')->info("Service stopping ...");
+        static::$logger->info("Service stopping ...");
 
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGINT");
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGKILL");
@@ -161,7 +169,7 @@ class Server
         $this->stop();
         usleep(500);
 
-        app('log')->info("Service starting ...");
+        static::$logger->info("Service starting ...");
         exec("php ".base_path('artisan')." redis-server start -d > /dev/null &");
 
         exit();

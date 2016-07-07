@@ -5,7 +5,7 @@ namespace Encore\Laredis\Command;
 class HashSetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait {
-        execute as traitExecute;
+        process as traitProcess;
     }
 
     protected $name = 'HMSET';
@@ -48,7 +48,7 @@ class HashSetMultiple extends Command implements RoutableInterface
             $request->command('HSET');
             $request->parameters([$this->key, $key, $val]);
 
-            $this->traitExecute($request)->value();
+            $this->traitProcess($request)->value();
         }
 
         return true;

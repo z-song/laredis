@@ -102,7 +102,7 @@ class Connection
         $this->remoteAddress = $remoteAddress;
         $this->id = static::$counter++;
 
-        app('log')->info("$this->id connected");
+        Server::$logger->info("$this->id connected");
 
         stream_set_blocking($this->socket, 0);
         Server::$eventLoop->add($this->socket, EventLoop::EV_READ, [$this, 'read']);
@@ -128,7 +128,7 @@ class Connection
             $request = new Request($command, $buffer);
             $request->setConnection($this);
 
-            app('log')->info('CMD', [$command, $request->parameters()]);
+            $this->logRequest($request);
 
             if ($this->isMulti && ! $this->isTransactionCmd($command)) {
                 $response = $this->queueCommand($request);
@@ -145,6 +145,19 @@ class Connection
 
             Server::$eventLoop->add($this->socket, EventLoop::EV_WRITE, [$this, 'write']);
         }
+    }
+
+    /**
+     * Log the request.
+     *
+     * @param Request $request
+     * @return void
+     */
+    protected function logRequest(Request $request)
+    {
+        $context = array_merge([$request->command()], $request->parameters());
+
+        Server::$logger->info('CMD', $context);
     }
 
     /**
@@ -213,7 +226,8 @@ class Connection
         }
 
         if ($response->isError()) {
-            app('log')->error('ERROR:'.$exception->getMessage(), $exception->getTrace());
+            echo $exception->getTraceAsString(), "\r\n";
+            Server::$logger->error('ERROR:'.$exception->getMessage(), $exception->getTrace());
         }
 
         return $response;
@@ -245,7 +259,7 @@ class Connection
      */
     protected function destroy()
     {
-        app('log')->info("$this->id closed");
+        Server::$logger->info("$this->id closed");
 
         // Remove event listener.
         Server::$eventLoop->del($this->socket, EventLoop::EV_READ);

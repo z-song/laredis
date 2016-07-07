@@ -5,7 +5,7 @@ namespace Encore\Laredis\Command;
 class HashGetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait {
-        execute as traitExecute;
+        process as traitProcess;
     }
 
     protected $name = 'HMGET';
@@ -38,7 +38,7 @@ class HashGetMultiple extends Command implements RoutableInterface
             $request->command('HGET');
             $request->parameters([$key, $field]);
 
-            $result[] = $this->traitExecute($request)->value();
+            $result[] = $this->traitProcess($request)->value();
         }
 
         return $result;

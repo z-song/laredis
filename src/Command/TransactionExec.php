@@ -7,7 +7,7 @@ use Encore\Laredis\Routing\Response;
 class TransactionExec extends Command implements RoutableInterface
 {
     use RoutableTrait {
-        execute as traitExecute;
+        process as traitProcess;
     }
 
     protected $name = 'EXEC';
@@ -18,8 +18,10 @@ class TransactionExec extends Command implements RoutableInterface
             return new Response('EXEC without MULTI', Response::ERR);
         }
 
+        $result = [];
+
         foreach ($this->request->connection()->requestQueue as $request) {
-            $result[] = $this->traitExecute($request)->value();
+            $result[] = $this->traitProcess($request)->value();
         }
 
         $this->request->connection()->clearMulti();

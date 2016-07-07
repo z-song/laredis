@@ -46,7 +46,7 @@ class Request
     {
         if (is_string($command)) {
             $this->command = $command;
-            return;
+            return null;
         }
 
         return $this->command;
@@ -62,7 +62,7 @@ class Request
     {
         if (is_array($parameters)) {
             $this->parameters = $parameters;
-            return;
+            return null;
         }
 
         return $this->parameters;

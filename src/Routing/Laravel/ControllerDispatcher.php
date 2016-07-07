@@ -2,7 +2,6 @@
 
 namespace Encore\Laredis\Routing\Laravel;
 
-
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
@@ -16,7 +15,7 @@ class ControllerDispatcher
     /**
      * The router instance.
      *
-     * @var \Illuminate\Routing\Router
+     * @var Router
      */
     protected $router;
 
@@ -30,9 +29,8 @@ class ControllerDispatcher
     /**
      * Create a new controller dispatcher instance.
      *
-     * @param  \Illuminate\Routing\Router  $router
+     * @param  Router  $router
      * @param  \Illuminate\Container\Container  $container
-     * @return void
      */
     public function __construct(
         Router $router,
@@ -46,8 +44,8 @@ class ControllerDispatcher
     /**
      * Dispatch a request to a given controller and method.
      *
-     * @param  \Illuminate\Routing\Route  $route
-     * @param  \Encore\Laredis\Routing\Request  $request
+     * @param  Route  $route
+     * @param  Request  $request
      * @param  string  $controller
      * @param  string  $method
      * @return mixed
@@ -76,8 +74,8 @@ class ControllerDispatcher
      * Call the given controller instance method.
      *
      * @param  \Illuminate\Routing\Controller  $instance
-     * @param  \Illuminate\Routing\Route  $route
-     * @param  \Encore\Laredis\Routing\Request  $request
+     * @param  Route  $route
+     * @param  Request  $request
      * @param  string  $method
      * @return mixed
      */
@@ -96,7 +94,6 @@ class ControllerDispatcher
                     ->through($middleware)
                     ->then(function ($request) use ($instance, $route, $method) {
                         return $this->router->prepareResponse(
-                            $request,
                             $this->call($instance, $route, $method, $request)
                         );
                     });
@@ -138,9 +135,10 @@ class ControllerDispatcher
     /**
      * Call the given controller instance method.
      *
-     * @param  \Illuminate\Routing\Controller  $instance
-     * @param  \Illuminate\Routing\Route  $route
-     * @param  string  $method
+     * @param \Illuminate\Routing\Controller $instance
+     * @param Route $route
+     * @param string $method
+     * @param Request $request
      * @return mixed
      */
     protected function call($instance, $route, $method, $request)
