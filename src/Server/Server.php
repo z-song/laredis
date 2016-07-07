@@ -2,11 +2,10 @@
 
 namespace Encore\Laredis\Server;
 
-
-use Encore\Laredis\Server\EventLoop\Select;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Encore\Laredis\Server\EventLoop\Select;
 use Encore\Laredis\Server\EventLoop\Libevent;
 
 class Server
@@ -89,6 +88,9 @@ class Server
         $this->init();
     }
 
+    /**
+     * Initialize.
+     */
     public function init()
     {
         static::$logger = new Logger('laredis');
@@ -101,6 +103,11 @@ class Server
         }
     }
 
+    /**
+     * Listen.
+     *
+     * @throws Exception
+     */
     public function listen()
     {
         $flags  = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
@@ -124,9 +131,14 @@ class Server
         stream_set_blocking($this->server, 0);
     }
 
+    /**
+     * Start the server.
+     *
+     * @throws Exception
+     */
     public function start()
     {
-        static::$logger->info("Service starting ...");
+        echo "Service starting ...\n";
 
         static::daemonize();
 
@@ -156,6 +168,8 @@ class Server
     }
 
     /**
+     * Save pid to pid file.
+     *
      * @throws Exception
      */
     protected function savePid()
@@ -223,16 +237,31 @@ class Server
         unset($this->connections[$id]);
     }
 
+    /**
+     * If run in daemon mode.
+     *
+     * @return bool
+     */
     protected static function isDaemonize()
     {
         return config('laredis.daemonize') || in_array('-d', $_SERVER['argv']);
     }
 
+    /**
+     * Run server in daemon mode.
+     *
+     * @throws Exception
+     */
     protected static function daemonize()
     {
         if (! static::isDaemonize()) {
+
+            echo "Press Ctrl-C to quit. Start success.\n";
+
             return;
         }
+
+        echo "Input \"php artisan redis-server stop\" to quit. Start success.\n";
 
         umask(0);
         $pid = pcntl_fork();
@@ -265,6 +294,12 @@ class Server
         return ! empty($passwords);
     }
 
+    /**
+     * Validate password.
+     *
+     * @param $password
+     * @return bool
+     */
     public static function validatePassword($password)
     {
         $passwords  = (array) config('laredis.password');
@@ -272,6 +307,12 @@ class Server
         return in_array($password, $passwords);
     }
 
+    /**
+     * Show usage
+     *
+     * @param $method
+     * @param $arguments
+     */
     public function __call($method, $arguments)
     {
         exit("Usage: php artisan {start|stop|restart}\n");

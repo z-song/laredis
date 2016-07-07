@@ -2,43 +2,10 @@
 
 namespace Encore\Laredis\Server\EventLoop;
 
-class Select
+use Encore\Laredis\Server\EventLoop;
+
+class Select implements EventLoop
 {
-    /**
-     * Read event.
-     *
-     * @var int
-     */
-    const EV_READ = 1;
-
-    /**
-     * Write event.
-     *
-     * @var int
-     */
-    const EV_WRITE = 2;
-
-    /**
-     * Signal event.
-     *
-     * @var int
-     */
-    const EV_SIGNAL = 4;
-
-    /**
-     * Timer event.
-     *
-     * @var int
-     */
-    const EV_TIMER = 8;
-
-    /**
-     * Timer once event.
-     *
-     * @var int
-     */
-    const EV_TIMER_ONCE = 16;
-    
     /**
      * Fds waiting for read event.
      *

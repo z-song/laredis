@@ -2,32 +2,13 @@
 
 namespace Encore\Laredis\Server\EventLoop;
 
+use Encore\Laredis\Server\EventLoop;
+
 /**
  * libevent eventloop
  */
-class Libevent
+class Libevent implements EventLoop
 {
-    /**
-     * Read event.
-     *
-     * @var int
-     */
-    const EV_READ = 1;
-
-    /**
-     * Write event.
-     *
-     * @var int
-     */
-    const EV_WRITE = 2;
-
-    /**
-     * Signal event.
-     *
-     * @var int
-     */
-    const EV_SIGNAL = 4;
-
     /**
      * Event base.
      *
