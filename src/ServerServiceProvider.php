@@ -2,7 +2,6 @@
 
 namespace Encore\Laredis;
 
-use Encore\Laredis\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class ServerServiceProvider extends ServiceProvider
@@ -18,7 +17,7 @@ class ServerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php'),], 'laredis');
+        $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php')], 'laredis');
     }
 
     /**
@@ -28,6 +27,11 @@ class ServerServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if (empty(config('laredis'))) {
+            $config = require __DIR__ . '/../config/laredis.php';
+            config(['laredis' => $config]);
+        }
+
         $this->registerRouter();
         $this->registerCommands();
     }
@@ -41,7 +45,8 @@ class ServerServiceProvider extends ServiceProvider
     {
         $this->app['redis.router'] = $this->app->share(function ($app) {
 
-            $router = new Router($app);
+            $routerClass = $this->getRouterClass();
+            $router = new $routerClass($app);
 
             foreach ((array) config('laredis.middleware') as $name => $class) {
                 $router->middleware($name, $class);
@@ -49,6 +54,15 @@ class ServerServiceProvider extends ServiceProvider
 
             return $router;
         });
+    }
+
+    public function getRouterClass()
+    {
+        if (str_contains($this->app->version(), 'Lumen')) {
+            return \Encore\Laredis\Routing\Lumen\Router::class;
+        }
+
+        return \Encore\Laredis\Routing\Laravel\Router::class;
     }
 
     /**

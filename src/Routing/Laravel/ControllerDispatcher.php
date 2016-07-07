@@ -1,11 +1,13 @@
 <?php
 
-namespace Encore\Laredis\Routing;
+namespace Encore\Laredis\Routing\Laravel;
+
 
 use Illuminate\Routing\Pipeline;
-use Illuminate\Routing\RouteDependencyResolverTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
+use Encore\Laredis\Routing\Request;
+use Illuminate\Routing\RouteDependencyResolverTrait;
 
 class ControllerDispatcher
 {
@@ -45,7 +47,7 @@ class ControllerDispatcher
      * Dispatch a request to a given controller and method.
      *
      * @param  \Illuminate\Routing\Route  $route
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @param  string  $controller
      * @param  string  $method
      * @return mixed
@@ -75,7 +77,7 @@ class ControllerDispatcher
      *
      * @param  \Illuminate\Routing\Controller  $instance
      * @param  \Illuminate\Routing\Route  $route
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @param  string  $method
      * @return mixed
      */

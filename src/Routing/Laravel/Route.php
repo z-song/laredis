@@ -1,8 +1,9 @@
 <?php
 
-namespace Encore\Laredis\Routing;
+namespace Encore\Laredis\Routing\Laravel;
 
 use Closure;
+
 use LogicException;
 use ReflectionMethod;
 use ReflectionFunction;
@@ -10,6 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use UnexpectedValueException;
 use Illuminate\Container\Container;
+use Encore\Laredis\Routing\Request;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Illuminate\Http\Exception\HttpResponseException;
 use Illuminate\Routing\RouteDependencyResolverTrait;
@@ -116,7 +118,7 @@ class Route
     /**
      * Run the route action and return the response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return mixed
      */
     public function run(Request $request)
@@ -137,7 +139,7 @@ class Route
     /**
      * Run the route action and return the response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return mixed
      */
     protected function runCallable(Request $request)
@@ -155,7 +157,7 @@ class Route
     /**
      * Run the route action and return the response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return mixed
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
@@ -171,7 +173,7 @@ class Route
     /**
      * Determine if the route matches given request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @param  bool  $includingMethod
      * @return bool
      */
@@ -400,7 +402,7 @@ class Route
     /**
      * Bind the route to a given request for execution.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return $this
      */
     public function bind(Request $request)
@@ -415,7 +417,7 @@ class Route
     /**
      * Extract the parameter list from the request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return array
      */
     public function bindParameters(Request $request)
@@ -443,7 +445,7 @@ class Route
     /**
      * Get the parameter matches for the path portion of the key.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @return array
      */
     protected function bindPathParameters(Request $request)
@@ -456,7 +458,7 @@ class Route
     /**
      * Extract the parameter list from the host part of the request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Encore\Laredis\Routing\Request  $request
      * @param  array  $parameters
      * @return array
      */

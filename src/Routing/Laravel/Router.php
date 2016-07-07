@@ -1,12 +1,14 @@
 <?php
 
-namespace Encore\Laredis\Routing;
+namespace Encore\Laredis\Routing\Laravel;
 
 use Closure;
 use Illuminate\Support\Arr;
 use Encore\Laredis\Command\Redis;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Container\Container;
+use Encore\Laredis\Routing\Request;
+use Encore\Laredis\Routing\Response;
 use Encore\Laredis\Command\RoutableInterface;
 use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Exceptions\NotFoundCommandException;
@@ -42,9 +44,14 @@ class Router
     protected $middleware = [];
 
     /**
+     * @var array
+     */
+    protected $middlewareGroups = [];
+
+    /**
      * Routable data types.
      *
-     * @var array
+     * @var array`
      */
     protected $routableDataTypes = ['string', 'hash', 'list', 'set'];
 
@@ -85,9 +92,7 @@ class Router
 
         foreach ($routable as $command => $routes) {
             foreach ($routes as $route) {
-
                 $this->addRoute($command, $key, "$controller@$command");
-                //$this->__call($command, [$key, ['uses' => "$controller@$command"]]);
             }
         }
     }
@@ -495,10 +500,6 @@ class Router
         if (in_array($method, $this->routableDataTypes)) {
             return call_user_func_array([$this, 'addControllerRoute'], $arguments);
         }
-
-//        if (Redis::supports($method)) {
-//            $this->addRoute($method, $arguments[0], $arguments[1]);
-//        }
     }
 
     /**

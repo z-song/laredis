@@ -2,19 +2,17 @@
 
 namespace Encore\Laredis\Command;
 
-use Encore\Laredis\Routing\Router;
-
 trait RoutableTrait
 {
     /**
-     * @var Router
+     * @var
      */
     protected $router;
 
     /**
-     * @param Router $router
+     * @param $router
      */
-    public function setRouter(Router $router)
+    public function setRouter($router)
     {
         $this->router = $router;
     }

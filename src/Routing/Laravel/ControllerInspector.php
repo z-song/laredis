@@ -1,10 +1,10 @@
 <?php
 
-namespace Encore\Laredis\Routing;
+namespace Encore\Laredis\Routing\Laravel;
 
-use Encore\Laredis\Command\Redis;
 use ReflectionClass;
 use ReflectionMethod;
+use Encore\Laredis\Command\Redis;
 
 class ControllerInspector
 {

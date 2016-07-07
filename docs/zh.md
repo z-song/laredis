@@ -1,29 +1,27 @@
 # laredis
 
-Laredis can help you to make your laravel application become a redis server.
+使用`Laredis`将你的`laravel`应用变成redis服务器.
 
-[中文文档](/docs/zh.md)
 
-##Installation
+##安装
 
 ```
 composer require encore/laredis "dev-master"
 ```
 
-Add `ServerServiceProvider` to `config/app.php`:
+在`config/app.php`加入`ServerServiceProvider`:
 
 ```
 Encore\Laredis\ServerServiceProvider::class,
 ```
 
-Then run these commands to finish installation:
-
+运行下面的命令完成安装：
 ```
 php artisan vendor:publish --tag=laredis
 ```
 
-##Usage
-In routes.php add:
+##使用
+在`routes.php`文件里面添加路由：
 ```
 app('redis.router')->group([
     'namespace' => 'App\Http\Controllers',
@@ -47,17 +45,18 @@ app('redis.router')->group([
 });
 ```
 
-Start the server:
+启动服务:
 ```
 php artisan redis-server start
 ```
 
-Or use `-d` option to run service in daemon mode.
+可以使用`-d`参数让服务在后台运行
 
-Then use any kind of redis client to access the server:
+接下来就可以用任何redis客户端来连接操作redis服务了:
 
 ```
 
+// 控制台
 $ redis-cli
 
 127.0.0.1:6379> auth 123456
@@ -85,7 +84,7 @@ PONG
 
 ```
 
-##Use controller to handle requests.
+##使用控制器来处理请求
 
 
 ```
@@ -156,7 +155,7 @@ public function scard($id)
 }
 ```
 
-##Supported commands
+##目前支持以下命令
 
 + AUTH
 + ECHO
