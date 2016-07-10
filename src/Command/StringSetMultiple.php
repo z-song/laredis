@@ -29,7 +29,7 @@ class StringSetMultiple extends Command implements RoutableInterface
             try {
                 $this->traitProcess($request);
             } catch (\Exception $e) {
-
+                // Pass if catch a exception.
             }
         }
 

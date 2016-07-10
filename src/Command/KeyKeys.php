@@ -10,17 +10,17 @@ class KeyKeys extends Command implements RoutableInterface
 
     protected $arity = 1;
 
-    public function process()
-    {
-        $routes = $this->router->routes();
-        $matched = [];
-
-        foreach (array_flatten($routes) as $route) {
-            if ($route->matches($this->request)) {
-                $matched[] = $route->key();
-            }
-        }
-
-        return $matched;
-    }
+//    public function process()
+//    {
+//        $routes = $this->router->routes();
+//        $matched = [];
+//
+//        foreach (array_flatten($routes) as $route) {
+//            if ($route->matches($this->request)) {
+//                $matched[] = $route->key();
+//            }
+//        }
+//
+//        return $matched;
+//    }
 }

@@ -8,7 +8,7 @@ class KeyDelete extends Command implements RoutableInterface
 {
     use RoutableTrait {
         process as traitProcess;
-    };
+    }
 
     protected $name = 'DEL';
 

@@ -30,7 +30,7 @@ class Route
     /**
      * The HTTP methods the route responds to.
      *
-     * @var array
+     * @var string
      */
     protected $command;
 

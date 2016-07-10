@@ -38,7 +38,7 @@ class Server
     /**
      * Server socket.
      *
-     * @var null
+     * @var resource
      */
     protected $server = null;
 
@@ -60,7 +60,7 @@ class Server
     protected static $pidFile = '';
 
     /**
-     * @var null
+     * @var integer
      */
     protected static $pid = null;
 
@@ -123,8 +123,10 @@ class Server
         // Try to open keepalive for tcp and disable Nagle algorithm.
         if (function_exists('socket_import_stream')) {
             $socket = socket_import_stream($this->server);
-            @socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
-            @socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+            if (is_resource($socket)) {
+                socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
+                socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+            }
         }
 
         // Non blocking.

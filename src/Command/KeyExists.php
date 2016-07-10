@@ -10,16 +10,16 @@ class KeyExists extends Command implements RoutableInterface
 
     protected $arity = 1;
 
-    public function process()
-    {
-        $routes = $this->router->routes();
-
-        foreach (array_flatten($routes) as $route) {
-            if ($route->matches($this->request)) {
-                return 1;
-            }
-        }
-
-        return 0;
-    }
+//    public function process()
+//    {
+//        $routes = $this->router->routes();
+//
+//        foreach (array_flatten($routes) as $route) {
+//            if ($route->matches($this->request)) {
+//                return 1;
+//            }
+//        }
+//
+//        return 0;
+//    }
 }
