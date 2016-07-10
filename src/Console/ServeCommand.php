@@ -44,7 +44,7 @@ class ServeCommand extends Command
         try {
             $server->$action();
         } catch (Exception $e) {
-            dump($e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+            Server::$logger->info($e->getMessage(), [$e->getFile(), $e->getLine(), $e->getTraceAsString()]);
         }
     }
 

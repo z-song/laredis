@@ -12,6 +12,6 @@ class StringSet extends Command implements RoutableInterface
 
     protected function validateArguments()
     {
-        return parent::validateArguments() && count($this->arguments) % 2 !== 0;
+        return parent::validateArguments() && count($this->arguments) % 2 === 0;
     }
 }

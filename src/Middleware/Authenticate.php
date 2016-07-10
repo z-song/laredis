@@ -13,7 +13,7 @@ class Authenticate
      * Handle an incoming request.
      *
      * @param Request $request
-     * @param callable $next
+     * @param Closure $next
      * @return mixed
      * @throws AuthException
      */

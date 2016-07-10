@@ -3,6 +3,7 @@
 namespace Encore\Laredis\Routing\Laravel;
 
 use Closure;
+use Encore\Laredis\Routing\RouterInterface;
 use Illuminate\Support\Arr;
 use Encore\Laredis\Command\Redis;
 use Illuminate\Routing\Pipeline;
@@ -13,7 +14,7 @@ use Encore\Laredis\Command\RoutableInterface;
 use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Exceptions\NotFoundCommandException;
 
-class Router
+class Router implements RouterInterface
 {
     /**
      * The route collection instance.
@@ -374,7 +375,6 @@ class Router
      *
      * @param Request $request
      * @return mixed
-     * @throws NotFoundRouteException
      */
     public function send(Request $request)
     {

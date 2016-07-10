@@ -3,6 +3,7 @@
 namespace Encore\Laredis\Routing\Lumen;
 
 use Closure;
+use Encore\Laredis\Routing\RouterInterface;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Encore\Laredis\Command\Redis;
@@ -17,7 +18,7 @@ use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Exceptions\NotFoundCommandException;
 use Laravel\Lumen\Routing\Controller as LumenController;
 
-class Router
+class Router implements RouterInterface
 {
     /**
      * All of the routes waiting to be registered.
@@ -322,15 +323,15 @@ class Router
      * @param Request $request
      * @return mixed
      */
-    public function send($request)
+    public function send(Request $request)
     {
-        if (empty($this->request)) {
-            $this->request = $request;
-        }
+        $this->request = $request;
 
         return $this->sendThroughPipeline($this->middleware, function () use ($request) {
             if (isset($this->routes[$request->command().$request->key()])) {
-                return $this->handleFoundRoute([true, $this->routes[$request->command().$request->key()]['action'], []]);
+                return $this->handleFoundRoute(
+                    [true, $this->routes[$request->command().$request->key()]['action'], []]
+                );
             }
 
             return $this->handleDispatcherResponse(
@@ -391,11 +392,13 @@ class Router
                 throw new NotFoundRouteException;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
-                throw new NotFoundRouteException($routeInfo[1]);
+                throw new NotFoundRouteException();
 
             case Dispatcher::FOUND:
                 return $this->handleFoundRoute($routeInfo);
         }
+
+        return null;
     }
 
     /**
@@ -533,6 +536,8 @@ class Router
      */
     protected function callControllerCallable(callable $callable, array $parameters = [])
     {
+        $parameters = array_merge($parameters, array_slice($this->request->parameters(), 1));
+
         return $this->prepareResponse(
             $this->container->call($callable, $parameters)
         );

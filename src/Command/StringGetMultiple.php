@@ -2,11 +2,11 @@
 
 namespace Encore\Laredis\Command;
 
-use Encore\Laredis\Routing\Response;
-
 class StringGetMultiple extends Command implements RoutableInterface
 {
-    use RoutableTrait;
+    use RoutableTrait {
+        process as traitProcess;
+    }
 
     protected $name = 'MGET';
 
@@ -20,28 +20,17 @@ class StringGetMultiple extends Command implements RoutableInterface
 
             $request = clone $this->request;
             $request->command('GET');
-            $request->parameters([$key]);
+            $request->setParameters([$key]);
 
-            $result[] = $this->runGet($request);
+            try {
+                $value = $this->traitProcess($request)->value();
+            } catch (\Exception $e) {
+                $value = null;
+            }
+
+            $result[] = $value;
         }
 
         return $result;
-    }
-
-    protected function runGet($request)
-    {
-        $route = $this->router->findRoute($request, false);
-
-        if (is_null($route)) {
-            return null;
-        }
-
-        $response = $this->router->runRouteWithinStack($route, $request);
-
-        if ($response instanceof Response) {
-            return $response->value();
-        }
-
-        return $response;
     }
 }

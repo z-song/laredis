@@ -53,19 +53,24 @@ class Request
     }
 
     /**
-     * Get or Set the parameters of the request.
+     * Get parameters of the request.
      *
-     * @param null $parameters
-     * @return array|void
+     * @return array
      */
-    public function parameters($parameters = null)
+    public function parameters()
     {
-        if (is_array($parameters)) {
-            $this->parameters = $parameters;
-            return null;
-        }
-
         return $this->parameters;
+    }
+
+    /**
+     * Set parameters of the request.
+     *
+     * @param array $parameters
+     * @return void
+     */
+    public function setParameters(array $parameters)
+    {
+        $this->parameters = $parameters;
     }
 
     /**
@@ -127,5 +132,7 @@ class Request
         if (array_key_exists($key, $all)) {
             return $all[$key];
         }
+
+        return null;
     }
 }

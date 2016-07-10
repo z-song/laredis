@@ -4,7 +4,9 @@ namespace Encore\Laredis\Command;
 
 class HashDelete extends Command implements RoutableInterface
 {
-    use RoutableTrait;
+    use RoutableTrait {
+        process as traitProcess;
+    }
 
     protected $name = 'HDEL';
 
@@ -14,10 +16,8 @@ class HashDelete extends Command implements RoutableInterface
     {
         $parameters = [$this->arguments[0], array_slice($this->arguments, 1)];
 
-        $this->request->parameters($parameters);
+        $this->request->setParameters($parameters);
 
-        $route = $this->router->findRoute($this->request);
-
-        return $this->router->runRouteWithinStack($route, $this->request);
+        return $this->traitProcess();
     }
 }

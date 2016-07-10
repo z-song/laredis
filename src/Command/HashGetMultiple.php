@@ -2,6 +2,8 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\Request;
+
 class HashGetMultiple extends Command implements RoutableInterface
 {
     use RoutableTrait {
@@ -14,31 +16,18 @@ class HashGetMultiple extends Command implements RoutableInterface
 
     public function process()
     {
-        $parameters = [$this->arguments[0], array_slice($this->arguments, 1)];
-
-        $this->request->parameters($parameters);
-
-        $route = $this->router->findRoute($this->request, false);
-
-        if (is_null($route)) {
-            return $this->getMultiple();
-        }
-
-        return $this->router->runRouteWithinStack($route, $this->request);
-    }
-
-    protected function getMultiple()
-    {
-        $key = $this->arguments[0];
         $result = [];
 
-        foreach ($this->request->parameter(1) as $field) {
+        foreach (array_slice($this->arguments, 1) as $field) {
+            $request = new Request('HGET', [$this->arguments[0], $field]);
+            $request->setConnection($this->request->connection());
+            try {
+                $value = $this->traitProcess($request)->value();
+            } catch (\Exception $e) {
+                $value = null;
+            }
 
-            $request = clone $this->request;
-            $request->command('HGET');
-            $request->parameters([$key, $field]);
-
-            $result[] = $this->traitProcess($request)->value();
+            $result[] = $value;
         }
 
         return $result;

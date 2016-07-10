@@ -2,9 +2,15 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\RouterInterface;
+
 interface RoutableInterface
 {
-    public function setRouter($router);
+    /**
+     * @param RouterInterface $router
+     * @return mixed
+     */
+    public function setRouter(RouterInterface $router);
 
     public function process();
 }

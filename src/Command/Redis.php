@@ -30,7 +30,7 @@ class Redis
             'MSET'      => StringSetMultiple::class,
 
             'DEL'       => KeyDelete::class,
-            'EXISTS'    => KeyExists::class,
+            //'EXISTS'    => KeyExists::class,
             //'KEYS'      => KeyKeys::class,
 
             'HGET'      => HashGet::class,

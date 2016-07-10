@@ -2,11 +2,11 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\Request;
+
 class StringGetSet extends Command implements RoutableInterface
 {
-    use RoutableTrait {
-        process as traitProcess;
-    }
+    use RoutableTrait;
 
     protected $name = 'GETSET';
 
@@ -14,18 +14,17 @@ class StringGetSet extends Command implements RoutableInterface
 
     public function process()
     {
-        $key = $this->arguments[0];
-        $getRequest = clone $this->request;
-        $getRequest->command('GET');
-        $getRequest->parameters([$key]);
-        $get = $this->traitProcess($getRequest);
-
+        $key   = $this->arguments[0];
         $value = $this->arguments[1];
-        $setRequest = clone $this->request;
-        $setRequest->command('SET');
-        $setRequest->parameters([$key, $value]);
-        $this->traitProcess($setRequest);
 
-        return $get;
+        $request = new Request('GET', [$key]);
+        $request->setConnection($this->request->connection());
+        $retval = $this->router->send($request);
+
+        $request = new Request('SET', [$key, $value]);
+        $request->setConnection($this->request->connection());
+        $this->router->send($request);
+
+        return $retval;
     }
 }

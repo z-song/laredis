@@ -2,9 +2,13 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\Request;
+
 class KeyDelete extends Command implements RoutableInterface
 {
-    use RoutableTrait;
+    use RoutableTrait {
+        process as traitProcess;
+    };
 
     protected $name = 'DEL';
 
@@ -16,27 +20,13 @@ class KeyDelete extends Command implements RoutableInterface
 
         foreach ($this->request->parameters() as $key) {
 
-            $request = clone $this->request;
-            $request->parameters([$key]);
-
-            if ($this->runDelete($request)) {
+            $request = new Request('DEL', [$key]);
+            $request->setConnection($this->request->connection());
+            if ($this->traitProcess($request)->value()) {
                 $success++;
             }
         }
 
         return $success;
-    }
-
-    protected function runDelete($request)
-    {
-        $route = $this->router->findRoute($request, false);
-
-        if (is_null($route)) {
-            return false;
-        }
-
-        $result = $this->router->runRouteWithinStack($route, $request);
-
-        return (bool) $result->value();
     }
 }

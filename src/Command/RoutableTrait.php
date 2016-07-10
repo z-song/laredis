@@ -2,30 +2,31 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\RouterInterface;
+
 trait RoutableTrait
 {
     /**
-     * @var \Encore\Laredis\Routing\Laravel\Router
+     * @var RouterInterface
      */
     protected $router;
 
     /**
-     * @param $router
+     * @param RouterInterface $router
      */
-    public function setRouter($router)
+    public function setRouter(RouterInterface $router)
     {
         $this->router = $router;
     }
 
     /**
-     * @param null $request
-     * @return mixed
-     * @throws \Encore\Laredis\Exceptions\NotFoundRouteException
+     * @param \Encore\Laredis\Routing\Request|null $request
+     * @return \Encore\Laredis\Routing\Response
      */
     public function process($request = null)
     {
         $request = $request ?: $this->request;
 
-        return $this->router->send($request);
+        return $this->router->send($request, true);
     }
 }

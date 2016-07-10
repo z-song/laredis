@@ -2,9 +2,13 @@
 
 namespace Encore\Laredis\Command;
 
+use Encore\Laredis\Routing\Request;
+
 class StringSetMultiple extends Command implements RoutableInterface
 {
-    use RoutableTrait;
+    use RoutableTrait {
+        process as traitProcess;
+    }
 
     protected $name = 'MSET';
 
@@ -12,7 +16,7 @@ class StringSetMultiple extends Command implements RoutableInterface
 
     protected function validateArguments()
     {
-        return parent::validateArguments() && count($this->arguments)%2 !== 0 ;
+        return parent::validateArguments() && count($this->arguments)%2 === 0 ;
     }
 
     public function process()
@@ -20,25 +24,15 @@ class StringSetMultiple extends Command implements RoutableInterface
         $chunks = array_chunk($this->request->parameters(), 2);
 
         foreach ($chunks as $chunk) {
+            $request = new Request('SET', $chunk);
+            $request->setConnection($this->request->connection());
+            try {
+                $this->traitProcess($request);
+            } catch (\Exception $e) {
 
-            $request = clone $this->request;
-            $request->command('SET');
-            $request->parameters($chunk);
-
-            $this->runSet($request);
+            }
         }
 
         return true;
-    }
-
-    protected function runSet($request)
-    {
-        $route = $this->router->findRoute($request, false);
-
-        if (is_null($route)) {
-            return null;
-        }
-
-        $this->router->runRouteWithinStack($route, $request);
     }
 }
