@@ -86,7 +86,7 @@ class Connection
     /**
      * Request queue.
      *
-     * @var array
+     * @var object<SplQueue>
      */
     public $requestQueue = [];
 
@@ -106,6 +106,8 @@ class Connection
 
         stream_set_blocking($this->socket, 0);
         Server::$eventLoop->add($this->socket, EventLoop::EV_READ, [$this, 'read']);
+
+        list($this->remoteIp, $this->remotePort) = explode(':', $this->remoteAddress, 2);
     }
 
     /**
@@ -194,7 +196,7 @@ class Connection
     public function clearMulti()
     {
         $this->isMulti = false;
-        $this->requestQueue = null;
+        $this->requestQueue = new \SplQueue();;
     }
 
     /**
@@ -256,6 +258,7 @@ class Connection
      * Destroy this connection.
      *
      * @return void
+     * @throws Exception
      */
     protected function destroy()
     {
@@ -266,7 +269,9 @@ class Connection
         Server::$eventLoop->del($this->socket, EventLoop::EV_WRITE);
 
         // Close socket.
-        @fclose($this->socket);
+        if(! fclose($this->socket)) {
+            throw new Exception('Close socket error.');
+        }
 
         if ($this->server) {
             $this->server->closeConnection($this->id);
@@ -282,10 +287,6 @@ class Connection
      */
     public function getRemoteIp()
     {
-        if (! $this->remoteIp) {
-            list($this->remoteIp, $this->remotePort) = explode(':', $this->remoteAddress, 2);
-        }
-
         return $this->remoteIp;
     }
 
@@ -296,10 +297,6 @@ class Connection
      */
     public function getRemotePort()
     {
-        if (! $this->remotePort) {
-            list($this->remoteIp, $this->remotePort) = explode(':', $this->remoteAddress, 2);
-        }
-
         return $this->remotePort;
     }
 
@@ -321,9 +318,9 @@ class Connection
     {
         $chunk = fgets($socket);
 
-        if ($chunk === false || $chunk === '') {
+        //if ($chunk === false || $chunk === '') {
             //$this->onConnectionError('Error while reading line from the server.');
-        }
+        //}
 
         $prefix = $chunk[0];
         $payload = substr($chunk, 1, -2);
@@ -345,9 +342,9 @@ class Connection
                 do {
                     $chunk = fread($socket, min($bytesLeft, 4096));
 
-                    if ($chunk === false || $chunk === '') {
+                    //if ($chunk === false || $chunk === '') {
                         //$this->onConnectionError('Error while reading bytes from the server.');
-                    }
+                    //}
 
                     $bulkData .= $chunk;
                     $bytesLeft = $size - strlen($bulkData);

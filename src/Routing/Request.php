@@ -39,17 +39,19 @@ class Request
     /**
      * Get or Set the command of the request.
      *
-     * @param null $command
-     * @return string|void
+     * @return string
      */
-    public function command($command = null)
+    public function command()
     {
-        if (is_string($command)) {
-            $this->command = $command;
-            return null;
-        }
-
         return $this->command;
+    }
+
+    /**
+     * @param string $command
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
     }
 
     /**

@@ -546,7 +546,7 @@ class Router implements RouterInterface
     /**
      * Gather the full class names for the middleware short-cut string.
      *
-     * @param  string  $middleware
+     * @param  string|array  $middleware
      * @return array
      */
     protected function gatherMiddlewareClassNames($middleware)

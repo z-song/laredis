@@ -97,8 +97,14 @@ class Router implements RouterInterface
 
     public function addControllerRoute($key, $controller)
     {
+        $prepended = '';
+
         if (! empty($this->groupStack)) {
             $prepended = $this->prependGroupUses($controller);
+        }
+
+        if (empty($prepended)) {
+            return null;
         }
 
         $routable = (new ControllerInspector())->getRoutable($prepended);

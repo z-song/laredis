@@ -3,7 +3,6 @@
 namespace Encore\Laredis\Routing\Laravel;
 
 use Closure;
-
 use LogicException;
 use ReflectionMethod;
 use ReflectionFunction;

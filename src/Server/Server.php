@@ -122,11 +122,12 @@ class Server
 
         // Try to open keepalive for tcp and disable Nagle algorithm.
         if (function_exists('socket_import_stream')) {
-            $socket = socket_import_stream($this->server);
-            if (is_resource($socket)) {
-                socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
-                socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+            if (! $socket = socket_import_stream($this->server)) {
+                throw new Exception('Import stream error.');
             }
+
+            socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
+            socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
         }
 
         // Non blocking.
