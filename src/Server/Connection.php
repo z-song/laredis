@@ -88,7 +88,7 @@ class Connection
      *
      * @var object<SplQueue>
      */
-    public $requestQueue = [];
+    public $requestQueue;
 
     /**
      * Create a new connection instance.
@@ -176,10 +176,10 @@ class Connection
     /**
      * Queue commands.
      *
-     * @param $request
+     * @param Request $request
      * @return Response
      */
-    public function queueCommand($request)
+    public function queueCommand(Request $request)
     {
         if (empty($this->requestQueue)) {
             $this->requestQueue = new \SplQueue();
@@ -238,7 +238,7 @@ class Connection
     /**
      * Base write handler.
      *
-     * @return void|bool
+     * @return boolean
      */
     public function write()
     {
@@ -312,15 +312,16 @@ class Connection
      * Parse command from client.
      *
      * @param $socket
-     * @return array|int|string|void
+     * @return array|int|string
+     * @throws Exception
      */
     public static function parseCommand($socket)
     {
         $chunk = fgets($socket);
 
-        //if ($chunk === false || $chunk === '') {
-            //$this->onConnectionError('Error while reading line from the server.');
-        //}
+        if ($chunk === false || $chunk === '') {
+            throw new Exception('Error while reading line from the server.');
+        }
 
         $prefix = $chunk[0];
         $payload = substr($chunk, 1, -2);
@@ -342,9 +343,9 @@ class Connection
                 do {
                     $chunk = fread($socket, min($bytesLeft, 4096));
 
-                    //if ($chunk === false || $chunk === '') {
-                        //$this->onConnectionError('Error while reading bytes from the server.');
-                    //}
+                    if ($chunk === false || $chunk === '') {
+                        throw new Exception('Error while reading line from the server.');
+                    }
 
                     $bulkData .= $chunk;
                     $bytesLeft = $size - strlen($bulkData);
@@ -375,9 +376,7 @@ class Connection
                 //return new ErrorResponse($payload);
 
             default:
-                //$this->onProtocolError("Unknown response prefix: '$prefix'.");
-
-                return null;
+                throw new Exception("Unknown response prefix: '$prefix'.");
         }
     }
 }

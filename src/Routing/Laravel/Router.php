@@ -103,10 +103,6 @@ class Router implements RouterInterface
             $prepended = $this->prependGroupUses($controller);
         }
 
-        if (empty($prepended)) {
-            return null;
-        }
-
         $routable = (new ControllerInspector())->getRoutable($prepended);
 
         foreach ($routable as $command => $routes) {

@@ -233,7 +233,7 @@ class Server
     /**
      * Close Connection.
      *
-     * @param $id
+     * @param integer $id
      */
     public function closeConnection($id)
     {

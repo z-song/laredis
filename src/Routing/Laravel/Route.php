@@ -139,7 +139,7 @@ class Route
      * Run the route action and return the response.
      *
      * @param  \Encore\Laredis\Routing\Request  $request
-     * @return mixed
+     * @return \Encore\Laredis\Routing\Response
      */
     protected function runCallable(Request $request)
     {
@@ -436,7 +436,7 @@ class Route
      * Get the parameter matches for the path portion of the key.
      *
      * @param  \Encore\Laredis\Routing\Request  $request
-     * @return array
+     * @return string[]
      */
     protected function bindPathParameters(Request $request)
     {
@@ -448,7 +448,7 @@ class Route
     /**
      * Combine a set of parameter matches with the route's keys.
      *
-     * @param  array  $matches
+     * @param  string[]  $matches
      * @return array
      */
     protected function matchToKeys(array $matches)
@@ -725,7 +725,7 @@ class Route
     /**
      * Set the router instance on the route.
      *
-     * @param  \Illuminate\Routing\Router  $router
+     * @param  Router  $router
      * @return $this
      */
     public function setRouter(Router $router)

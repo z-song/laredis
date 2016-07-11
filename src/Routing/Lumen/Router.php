@@ -344,7 +344,7 @@ class Router implements RouterInterface
      * Parse the incoming request and return the command and key.
      *
      * @param Request $request
-     * @return array
+     * @return string[]
      */
     protected function parseIncomingRequest($request)
     {
@@ -382,7 +382,7 @@ class Router implements RouterInterface
      * Handle the response from the FastRoute dispatcher.
      *
      * @param array $routeInfo
-     * @return mixed
+     * @return Response|null
      * @throws NotFoundRouteException
      */
     protected function handleDispatcherResponse($routeInfo)
@@ -405,7 +405,7 @@ class Router implements RouterInterface
      * Handle a route found by the dispatcher.
      *
      * @param  array  $routeInfo
-     * @return mixed
+     * @return Response
      */
     protected function handleFoundRoute($routeInfo)
     {
