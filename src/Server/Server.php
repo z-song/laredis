@@ -10,7 +10,9 @@ use Encore\Laredis\Server\EventLoop\Libevent;
 
 class Server
 {
-
+    /**
+     * Laredis Version.
+     */
     const VERSION = '0.1';
 
     /**
@@ -204,8 +206,6 @@ class Server
 
         static::$logger->info("Service starting ...");
         exec("php ".base_path('artisan')." redis-server start -d > /dev/null &");
-
-        exit();
     }
 
     /**
@@ -318,6 +318,8 @@ class Server
      */
     public function __call($method, $arguments)
     {
-        exit("Usage: php artisan {start|stop|restart}\n");
+        echo "Usage: php artisan {start|stop|restart}\n";
+
+        return;
     }
 }

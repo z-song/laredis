@@ -13,7 +13,6 @@ use Encore\Laredis\Routing\Request;
 use Encore\Laredis\Routing\Response;
 use Encore\Laredis\Command\RoutableInterface;
 use Laravel\Lumen\Routing\Closure as RoutingClosure;
-use Illuminate\Http\Exception\HttpResponseException;
 use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Exceptions\NotFoundCommandException;
 use Laravel\Lumen\Routing\Controller as LumenController;
@@ -300,7 +299,7 @@ class Router implements RouterInterface
      * @return Response
      * @throws NotFoundCommandException
      */
-    public function dispatch(Request $request = null)
+    public function dispatch(Request $request)
     {
         if (! Redis::supports($request->command())) {
             throw new NotFoundCommandException($request->command());
@@ -450,11 +449,7 @@ class Router implements RouterInterface
             }
         }
 
-        try {
-            return $this->prepareResponse($this->container->call($closure, $routeInfo[2]));
-        } catch (HttpResponseException $e) {
-            return $e->getResponse();
-        }
+        return $this->prepareResponse($this->container->call($closure, $routeInfo[2]));
     }
 
     /**

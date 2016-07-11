@@ -8,7 +8,6 @@ use Illuminate\Support\Arr;
 
 class Response implements Renderable
 {
-
     const ERR = 0;
     const OK  = 1;
     const STATUS  = 2;
@@ -88,14 +87,12 @@ class Response implements Renderable
                 return $bulk;
             }
 
-            //foreach ($payload as $value) {
             $bulk = "*".count($payload) . "\r\n";
             foreach ($payload as $key => $value) {
                 $bulk .= $this->encode($value);
             }
 
             return $bulk;
-            //}
         }
 
         return $output;

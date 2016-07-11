@@ -65,8 +65,6 @@ class ControllerDispatcher
      */
     protected function makeController($controller)
     {
-        //Controller::setRouter($this->router);
-
         return $this->container->make($controller);
     }
 

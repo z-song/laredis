@@ -12,7 +12,6 @@ use UnexpectedValueException;
 use Illuminate\Container\Container;
 use Encore\Laredis\Routing\Request;
 use Symfony\Component\Routing\Route as SymfonyRoute;
-use Illuminate\Http\Exception\HttpResponseException;
 use Illuminate\Routing\RouteDependencyResolverTrait;
 
 class Route
@@ -124,15 +123,11 @@ class Route
     {
         $this->container = $this->container ?: new Container;
 
-        try {
-            if (! is_string($this->action['uses'])) {
-                return $this->runCallable($request);
-            }
-
-            return $this->runController($request);
-        } catch (HttpResponseException $e) {
-            return $e->getResponse();
+        if (! is_string($this->action['uses'])) {
+            return $this->runCallable($request);
         }
+
+        return $this->runController($request);
     }
 
     /**

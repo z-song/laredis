@@ -327,9 +327,6 @@ class Connection
         $payload = substr($chunk, 1, -2);
 
         switch ($prefix) {
-            case '+':
-                //return StatusResponse::get($payload);
-
             case '$':
                 $size = (int) $payload;
 
@@ -371,9 +368,6 @@ class Connection
             case ':':
                 $integer = (int) $payload;
                 return $integer == $payload ? $integer : $payload;
-
-            case '-':
-                //return new ErrorResponse($payload);
 
             default:
                 throw new Exception("Unknown response prefix: '$prefix'.");
