@@ -196,7 +196,7 @@ class Connection
     public function clearMulti()
     {
         $this->isMulti = false;
-        $this->requestQueue = new \SplQueue();;
+        $this->requestQueue = new \SplQueue();
     }
 
     /**
@@ -269,7 +269,7 @@ class Connection
         Server::$eventLoop->del($this->socket, EventLoop::EV_WRITE);
 
         // Close socket.
-        if(! fclose($this->socket)) {
+        if (! fclose($this->socket)) {
             throw new Exception('Close socket error.');
         }
 

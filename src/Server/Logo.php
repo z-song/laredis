@@ -4,6 +4,15 @@ namespace Encore\Laredis\Server;
 
 class Logo
 {
+    /**
+     * Display the logo of laredis.
+     *
+     * @param string $version
+     * @param string $host
+     * @param int    $port
+     * @param int    $pid
+     * @return void
+     */
     public static function display($version, $host = '127.0.0.1', $port = 6379, $pid = 0)
     {
         $phpVersion = PHP_VERSION;

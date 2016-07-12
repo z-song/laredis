@@ -430,7 +430,7 @@ class Router implements RouterInterface
      * Call the Closure on the array based route.
      *
      * @param  array  $routeInfo
-     * @return mixed
+     * @return Response
      */
     protected function callActionOnArrayBasedRoute($routeInfo)
     {

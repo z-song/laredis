@@ -43,29 +43,34 @@ class Libevent implements EventLoop
      */
     public function add($fd, $flag, $func, $args = array())
     {
+        $fdKey = (int)$fd;
+
         switch ($flag) {
             case self::EV_SIGNAL:
-                $fd_key                      = (int)$fd;
-                $real_flag                   = EV_SIGNAL | EV_PERSIST;
-                $this->eventSignal[$fd_key] = event_new();
-                if (!event_set($this->eventSignal[$fd_key], $fd, $real_flag, $func, null)) {
+                $realFlag = EV_SIGNAL | EV_PERSIST;
+
+                $this->eventSignal[$fdKey] = event_new();
+
+                if (!event_set($this->eventSignal[$fdKey], $fd, $realFlag, $func, null)) {
                     return false;
                 }
-                if (!event_base_set($this->eventSignal[$fd_key], $this->eventBase)) {
+
+                if (!event_base_set($this->eventSignal[$fdKey], $this->eventBase)) {
                     return false;
                 }
-                if (!event_add($this->eventSignal[$fd_key])) {
+
+                if (!event_add($this->eventSignal[$fdKey])) {
                     return false;
                 }
+
                 return true;
 
             default:
-                $fd_key    = (int)$fd;
-                $real_flag = $flag === self::EV_READ ? EV_READ | EV_PERSIST : EV_WRITE | EV_PERSIST;
+                $realFlag = $flag === self::EV_READ ? EV_READ | EV_PERSIST : EV_WRITE | EV_PERSIST;
 
                 $event = event_new();
 
-                if (!event_set($event, $fd, $real_flag, $func, null)) {
+                if (!event_set($event, $fd, $realFlag, $func, null)) {
                     return false;
                 }
 
@@ -77,7 +82,7 @@ class Libevent implements EventLoop
                     return false;
                 }
 
-                $this->allEvents[$fd_key][$flag] = $event;
+                $this->allEvents[$fdKey][$flag] = $event;
 
                 return true;
         }
@@ -88,23 +93,24 @@ class Libevent implements EventLoop
      */
     public function del($fd, $flag)
     {
+        $fdKey = (int)$fd;
+
         switch ($flag) {
             case self::EV_READ:
             case self::EV_WRITE:
-                $fd_key = (int)$fd;
-                if (isset($this->allEvents[$fd_key][$flag])) {
-                    event_del($this->allEvents[$fd_key][$flag]);
-                    unset($this->allEvents[$fd_key][$flag]);
+
+                if (isset($this->allEvents[$fdKey][$flag])) {
+                    event_del($this->allEvents[$fdKey][$flag]);
+                    unset($this->allEvents[$fdKey][$flag]);
                 }
-                if (empty($this->allEvents[$fd_key])) {
-                    unset($this->allEvents[$fd_key]);
+                if (empty($this->allEvents[$fdKey])) {
+                    unset($this->allEvents[$fdKey]);
                 }
                 break;
             case self::EV_SIGNAL:
-                $fd_key = (int)$fd;
-                if (isset($this->eventSignal[$fd_key])) {
-                    event_del($this->eventSignal[$fd_key]);
-                    unset($this->eventSignal[$fd_key]);
+                if (isset($this->eventSignal[$fdKey])) {
+                    event_del($this->eventSignal[$fdKey]);
+                    unset($this->eventSignal[$fdKey]);
                 }
                 break;
         }

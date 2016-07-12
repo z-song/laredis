@@ -46,21 +46,20 @@ class Select implements EventLoop
      */
     public function add($fd, $flag, $func, $args = [])
     {
+        $fdKey = (int)$fd;
+
         switch ($flag) {
             case self::EV_READ:
-                $fdKey                           = (int)$fd;
-                $this->allEvents[$fdKey][$flag] = array($func, $fd);
+                $this->allEvents[$fdKey][$flag] = [$func, $fd];
                 $this->readFds[$fdKey]          = $fd;
                 break;
             case self::EV_WRITE:
-                $fdKey                           = (int)$fd;
-                $this->allEvents[$fdKey][$flag] = array($func, $fd);
+                $this->allEvents[$fdKey][$flag] = [$func, $fd];
                 $this->writeFds[$fdKey]         = $fd;
                 break;
             case self::EV_SIGNAL:
-                $fdKey                              = (int)$fd;
-                $this->signalEvents[$fdKey][$flag] = array($func, $fd);
-                pcntl_signal($fd, array($this, 'signalHandler'));
+                $this->signalEvents[$fdKey][$flag] = [$func, $fd];
+                pcntl_signal($fd, [$this, 'signalHandler']);
                 break;
         }
 
@@ -72,22 +71,22 @@ class Select implements EventLoop
      */
     public function del($fd, $flag)
     {
-        $fd_key = (int)$fd;
+        $fdKey = (int)$fd;
         switch ($flag) {
             case self::EV_READ:
-                unset($this->allEvents[$fd_key][$flag], $this->readFds[$fd_key]);
-                if (empty($this->allEvents[$fd_key])) {
-                    unset($this->allEvents[$fd_key]);
+                unset($this->allEvents[$fdKey][$flag], $this->readFds[$fdKey]);
+                if (empty($this->allEvents[$fdKey])) {
+                    unset($this->allEvents[$fdKey]);
                 }
                 return true;
             case self::EV_WRITE:
-                unset($this->allEvents[$fd_key][$flag], $this->writeFds[$fd_key]);
-                if (empty($this->allEvents[$fd_key])) {
-                    unset($this->allEvents[$fd_key]);
+                unset($this->allEvents[$fdKey][$flag], $this->writeFds[$fdKey]);
+                if (empty($this->allEvents[$fdKey])) {
+                    unset($this->allEvents[$fdKey]);
                 }
                 return true;
             case self::EV_SIGNAL:
-                unset($this->signalEvents[$fd_key]);
+                unset($this->signalEvents[$fdKey]);
                 pcntl_signal($fd, SIG_IGN);
                 break;
         }
@@ -118,7 +117,7 @@ class Select implements EventLoop
                 if (isset($this->allEvents[$fdKey][self::EV_READ])) {
                     call_user_func_array(
                         $this->allEvents[$fdKey][self::EV_READ][0],
-                        array($this->allEvents[$fdKey][self::EV_READ][1])
+                        [$this->allEvents[$fdKey][self::EV_READ][1]]
                     );
                 }
             }
@@ -128,7 +127,7 @@ class Select implements EventLoop
                 if (isset($this->allEvents[$fdKey][self::EV_WRITE])) {
                     call_user_func_array(
                         $this->allEvents[$fdKey][self::EV_WRITE][0],
-                        array($this->allEvents[$fdKey][self::EV_WRITE][1])
+                        [$this->allEvents[$fdKey][self::EV_WRITE][1]]
                     );
                 }
             }

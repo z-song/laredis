@@ -468,7 +468,7 @@ class Route
     protected function replaceDefaults(array $parameters)
     {
         foreach ($parameters as $key => &$value) {
-            $value = isset($value) ? $value : Arr::get($this->defaults, $key);
+            $value = $value ?: Arr::get($this->defaults, $key);
         }
 
         foreach ($this->defaults as $key => $value) {

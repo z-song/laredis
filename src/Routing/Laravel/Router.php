@@ -500,22 +500,24 @@ class Router implements RouterInterface
     /**
      * @param Request $request
      * @param bool $throwException
-     * @return mixed
+     * @return Route
      * @throws NotFoundCommandException
      * @throws NotFoundRouteException
      */
     public function findRoute(Request $request, $throwException = true)
     {
         if (! array_key_exists($request->command(), $this->routes) && $throwException) {
-            throw new NotFoundRouteException($request->command());
+            throw new NotFoundCommandException($request->command());
         }
 
         $routesForCommand = array_get($this->routes, $request->command());
 
-        foreach ((array) $routesForCommand as $route) {
-            if ($route->matches($request)) {
-                return $route->bind($request);
-            }
+        $route = array_filter($routesForCommand, function (Route $route) use ($request) {
+            return $route->matches($request);
+        });
+
+        if ($route instanceof Route) {
+            return $route->bind($request);
         }
 
         if ($throwException) {
@@ -523,6 +525,11 @@ class Router implements RouterInterface
         }
     }
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
     public function __call($method, $arguments)
     {
         if (in_array($method, $this->routableDataTypes)) {
