@@ -1,21 +1,16 @@
 <?php
 
-namespace Encore\Laredis\Routing\Lumen;
+namespace Encore\Laredis\Routing;
 
 use Closure;
-use Encore\Laredis\Routing\RouterInterface;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Encore\Laredis\Command\Redis;
 use Illuminate\Container\Container;
-use Laravel\Lumen\Routing\Pipeline;
-use Encore\Laredis\Routing\Request;
-use Encore\Laredis\Routing\Response;
 use Encore\Laredis\Command\RoutableInterface;
-use Laravel\Lumen\Routing\Closure as RoutingClosure;
 use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Exceptions\NotFoundCommandException;
-use Laravel\Lumen\Routing\Controller as LumenController;
+use Illuminate\Pipeline\Pipeline;
 
 class Router implements RouterInterface
 {
@@ -270,29 +265,6 @@ class Router implements RouterInterface
     }
 
     /**
-     * Call the terminable middleware.
-     *
-     * @param  mixed  $response
-     * @return void
-     */
-    protected function callTerminableMiddleware($response)
-    {
-        $response = $this->prepareResponse($response);
-
-        foreach ($this->middleware as $middleware) {
-            if (! is_string($middleware)) {
-                continue;
-            }
-
-            $instance = $this->container->make($middleware);
-
-            if (method_exists($instance, 'terminate')) {
-                $instance->terminate($this->request, $response);
-            }
-        }
-    }
-
-    /**
      * Dispatch the incoming request.
      *
      * @param Request $request
@@ -340,19 +312,6 @@ class Router implements RouterInterface
     }
 
     /**
-     * Parse the incoming request and return the command and key.
-     *
-     * @param Request $request
-     * @return string[]
-     */
-    protected function parseIncomingRequest($request)
-    {
-        $this->container->instance('Encore\Laredis\Routing\Request', $request);
-
-        return [$request->command(), $request->key()];
-    }
-
-    /**
      * Create a FastRoute dispatcher instance for the application.
      *
      * @return Dispatcher
@@ -364,17 +323,6 @@ class Router implements RouterInterface
                 $r->addRoute($route['method'], $route['uri'], $route['action']);
             }
         });
-    }
-
-    /**
-     * Set the FastRoute dispatcher instance.
-     *
-     * @param  \FastRoute\Dispatcher  $dispatcher
-     * @return void
-     */
-    public function setDispatcher(Dispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -444,7 +392,7 @@ class Router implements RouterInterface
 
         foreach ($action as $value) {
             if ($value instanceof Closure) {
-                $closure = $value->bindTo(new RoutingClosure);
+                $closure = $value;
                 break;
             }
         }
@@ -467,8 +415,8 @@ class Router implements RouterInterface
             throw new NotFoundRouteException;
         }
 
-        if ($instance instanceof LumenController) {
-            return $this->callLumenController($instance, $method, $routeInfo);
+        if ($instance instanceof Controller) {
+            return $this->callController($instance, $method, $routeInfo);
         } else {
             return $this->callControllerCallable(
                 [$instance, $method],
@@ -478,19 +426,19 @@ class Router implements RouterInterface
     }
 
     /**
-     * Send the request through a Lumen controller.
+     * Send the request through a controller.
      *
      * @param  mixed  $instance
      * @param  string  $method
      * @param  array  $routeInfo
      * @return mixed
      */
-    protected function callLumenController($instance, $method, $routeInfo)
+    protected function callController($instance, $method, $routeInfo)
     {
         $middleware = $instance->getMiddlewareForMethod($method);
 
         if (count($middleware) > 0) {
-            return $this->callLumenControllerWithMiddleware(
+            return $this->callControllerWithMiddleware(
                 $instance,
                 $method,
                 $routeInfo,
@@ -513,7 +461,7 @@ class Router implements RouterInterface
      * @param  array  $middleware
      * @return mixed
      */
-    protected function callLumenControllerWithMiddleware($instance, $method, $routeInfo, $middleware)
+    protected function callControllerWithMiddleware($instance, $method, $routeInfo, $middleware)
     {
         $middleware = $this->gatherMiddlewareClassNames($middleware);
 

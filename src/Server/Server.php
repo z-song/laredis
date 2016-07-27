@@ -101,7 +101,7 @@ class Server
 
         // Pid file.
         if (empty(static::$pidFile)) {
-            static::$pidFile = sys_get_temp_dir() . "/laravel-redis.pid";
+            static::$pidFile = sys_get_temp_dir() . "/laredis.pid";
         }
     }
 

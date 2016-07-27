@@ -98,7 +98,6 @@ class Libevent implements EventLoop
         switch ($flag) {
             case self::EV_READ:
             case self::EV_WRITE:
-
                 if (isset($this->allEvents[$fdKey][$flag])) {
                     event_del($this->allEvents[$fdKey][$flag]);
                     unset($this->allEvents[$fdKey][$flag]);

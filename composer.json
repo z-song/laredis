@@ -13,7 +13,10 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "~5.0"
+        "illuminate/pipeline": "~5.0",
+        "illuminate/support": "~5.0",
+        "monolog/monolog": "~1.11",
+        "nikic/fast-route": "0.7.*"
     },
     "autoload": {
         "psr-4": {

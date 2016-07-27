@@ -4,7 +4,7 @@ Laredis can help you to make your `Laravel`/`Lumen` application become a redis s
 
 [中文文档](/docs/zh.md)
 
-##Installation
+## Installation
 
 ```
 composer require encore/laredis "dev-master"
@@ -26,7 +26,7 @@ Then run these commands to finish installation:
 php artisan vendor:publish --tag=laredis
 ```
 
-##Usage
+## Usage
 In routes.php add:
 ```
 app('redis.router')->group([
@@ -89,95 +89,57 @@ PONG
 
 ```
 
-##Laravel Routing
+## Routing
 
+Use redis command name as method name to route your request.
 
-In laravel use methods `string()` `set()` `hash()` `list()` to map request to controller method.
 ```
+
 // in routes.php
-$router->string('users:{id}:{key}', UserController::class);
-$router->set('users:{id}:friends', FriendController::class);
-//$router->hash('article:{id}', ArticleController::class);
-//$router->list('users:{id}:books', BookController::class);
+$router->get('users:{id}:{key}', 'UserController@get');
+$router->set('users:{id}:{key}', 'UserController@set');
+$router->hgetall('users:{id}',   'UserController@hgetall');
+$router->hget('users:{id}',   'UserController@hget');
 
 // in UserController.php
 
-// handle `get users:{id}:{key}` command
-public function get($id, $key)
-{
-    $user = User::find($id);
+use Encore\Laredis\Routing\Controller;
 
-    return $user->$key;
+class UserController extends Controller
+{
+    public function get($id, $key)
+    {
+        $user = User::findOrFail($id);
+
+        return $user->$key;
+    }
+    
+    public function set($id, $key, $val)
+    {
+        $user = User::findOrFail($id);
+
+        return $user->$key;
+    }
+
+    public function hgetall($id)
+    {
+        $user = User::findOrFail($id);
+
+        return $user->toArray();
+    }
+    
+    public function hget($id, $field)
+    {
+        $user = User::findOrFail($id);
+
+        return $user->$field;
+    }
 }
 
-// handle `set users:{id}:{key} $val` command
-public function set($id, $key, $val)
-{
-    $user = User::find($id);
 
-    $user->$key = $val;
-
-    return $user->save();
-}
-
-// handle `strlen users:{id}:{key}` command
-public function strlen($id, $key)
-{
-    $user = User::find($id);
-
-    return strlen($user->$key);
-}
-
-// in FriendController.php
-
-// handle `sadd users:{id}:friends {fid}` command
-public function sadd($id, $fid)
-{
-    $user = User::findOrFail($id);
-
-    return $user->friends()->attach($fid);
-}
-
-// handle `srem users:{id}:friends {fid}` command
-public function srem($id, $fid)
-{
-    $user = User::findOrFail($id);
-
-    return $user->friends()->detach($fid);
-}
-
-// handle `smembers users:{id}:friends` command
-public function smembers($id)
-{
-    $user = User::findOrFail($id);
-
-    return $user->friends->pluck('id');
-}
-
-// handle `scard users:{id}:friends` command
-public function scard($id)
-{
-    $user = User::findOrFail($id);
-
-    return $user->friends()->count();
-}
 ```
 
-##Lumen Routing
-
-In lumen use command name as method name to route your request.
-
-```
-$router->get('users:{id}:{key}', 'UserController@get');
-
-$router->set('users:{id}:{key}', 'UserController@set');
-
-$router->hgetall('users:{id}',   'UserController@hgetall');
-
-$router->hget('users:{id}:{key}',   'UserController@hget');
-```
-
-##Supported commands
+## Supported commands
 
 + AUTH
 + ECHO
@@ -223,6 +185,6 @@ $router->hget('users:{id}:{key}',   'UserController@hget');
 + EXEC
 + DISCARD
 
-#License
+# License
 
 [WTFPL](http://www.wtfpl.net/)

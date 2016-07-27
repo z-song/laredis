@@ -2,6 +2,7 @@
 
 namespace Encore\Laredis;
 
+use Encore\Laredis\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class ServerServiceProvider extends ServiceProvider
@@ -46,20 +47,8 @@ class ServerServiceProvider extends ServiceProvider
     protected function registerRouter()
     {
         $this->app['redis.router'] = $this->app->share(function ($app) {
-
-            $routerClass = $this->getRouterClass();
-
-            return new $routerClass($app);
+            return new Router($app);
         });
-    }
-
-    public function getRouterClass()
-    {
-        if (str_contains($this->app->version(), 'Lumen')) {
-            return \Encore\Laredis\Routing\Lumen\Router::class;
-        }
-
-        return \Encore\Laredis\Routing\Laravel\Router::class;
     }
 
     /**
