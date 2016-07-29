@@ -145,7 +145,7 @@ class Server
     {
         echo "Service starting ...\n";
 
-        static::daemonize();
+        $this->daemonize();
 
         $this->savePid();
         $this->listen();
@@ -245,7 +245,7 @@ class Server
      *
      * @return bool
      */
-    protected static function isDaemonize()
+    protected function isDaemonize()
     {
         return config('laredis.daemonize') || in_array('-d', $_SERVER['argv']);
     }
@@ -255,9 +255,9 @@ class Server
      *
      * @throws Exception
      */
-    protected static function daemonize()
+    protected function daemonize()
     {
-        if (! static::isDaemonize()) {
+        if (! $this->isDaemonize()) {
 
             echo "Press Ctrl-C to quit. Start success.\n";
 

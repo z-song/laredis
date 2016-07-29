@@ -46,7 +46,7 @@ class ServerServiceProvider extends ServiceProvider
      */
     protected function registerRouter()
     {
-        $this->app['redis.router'] = $this->app->share(function ($app) {
+        $this->app->singleton('redis.router', function ($app) {
             return new Router($app);
         });
     }

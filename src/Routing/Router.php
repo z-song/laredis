@@ -417,12 +417,9 @@ class Router implements RouterInterface
 
         if ($instance instanceof Controller) {
             return $this->callController($instance, $method, $routeInfo);
-        } else {
-            return $this->callControllerCallable(
-                [$instance, $method],
-                $routeInfo[2]
-            );
         }
+
+        return $this->callControllerCallable([$instance, $method], $routeInfo[2]);
     }
 
     /**
@@ -444,12 +441,9 @@ class Router implements RouterInterface
                 $routeInfo,
                 $middleware
             );
-        } else {
-            return $this->callControllerCallable(
-                [$instance, $method],
-                $routeInfo[2]
-            );
         }
+
+        return $this->callControllerCallable([$instance, $method], $routeInfo[2]);
     }
 
     /**
