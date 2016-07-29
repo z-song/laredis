@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 class ServerServiceProvider extends ServiceProvider
 {
     protected $commands = [
-        'ServeCommand'
+        'ServeCommand',
     ];
 
     /**
@@ -19,7 +19,7 @@ class ServerServiceProvider extends ServiceProvider
     public function boot()
     {
         if (function_exists('config_path')) {
-            $this->publishes([__DIR__ . '/../config/laredis.php' => config_path('laredis.php'),], 'laredis');
+            $this->publishes([__DIR__.'/../config/laredis.php' => config_path('laredis.php')], 'laredis');
         }
     }
 
@@ -31,7 +31,7 @@ class ServerServiceProvider extends ServiceProvider
     public function register()
     {
         if (empty(config('laredis'))) {
-            $config = require __DIR__ . '/../config/laredis.php';
+            $config = require __DIR__.'/../config/laredis.php';
             config(['laredis' => $config]);
         }
 
@@ -59,7 +59,7 @@ class ServerServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         foreach ($this->commands as $command) {
-            $this->commands('Encore\Laredis\Console\\' . $command);
+            $this->commands('Encore\Laredis\Console\\'.$command);
         }
     }
 }

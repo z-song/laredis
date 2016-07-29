@@ -3,9 +3,9 @@
 namespace Encore\Laredis\Middleware;
 
 use Closure;
-use Encore\Laredis\Server\Server;
-use Encore\Laredis\Routing\Request;
 use Encore\Laredis\Exceptions\AuthException;
+use Encore\Laredis\Routing\Request;
+use Encore\Laredis\Server\Server;
 
 class Authenticate
 {
@@ -14,12 +14,14 @@ class Authenticate
      *
      * @param Request $request
      * @param Closure $next
-     * @return mixed
+     *
      * @throws AuthException
+     *
+     * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! Server::requirePass() || $request->connection()->authenticated) {
+        if (!Server::requirePass() || $request->connection()->authenticated) {
             return $next($request);
         }
 

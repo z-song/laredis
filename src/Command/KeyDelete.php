@@ -19,7 +19,6 @@ class KeyDelete extends Command implements RoutableInterface
         $success = 0;
 
         foreach ($this->request->parameters() as $key) {
-
             $request = new Request('DEL', [$key]);
             $request->setConnection($this->request->connection());
             if ($this->traitProcess($request)->value()) {

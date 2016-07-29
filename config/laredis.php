@@ -12,5 +12,5 @@ return [
 
     'middleware' => [
         'redis.auth' => Encore\Laredis\Middleware\Authenticate::class,
-    ]
+    ],
 ];

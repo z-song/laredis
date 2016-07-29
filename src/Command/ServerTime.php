@@ -10,6 +10,6 @@ class ServerTime extends Command
     {
         list($microseconds, $timestamp) = explode(' ', microtime());
 
-        return [(string)$timestamp, (string) ($microseconds * 1000000)];
+        return [(string) $timestamp, (string) ($microseconds * 1000000)];
     }
 }

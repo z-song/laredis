@@ -25,7 +25,7 @@ interface EventLoop
      */
     const EV_SIGNAL = 4;
 
-    public function add($fd, $flag, $func, $args = array());
+    public function add($fd, $flag, $func, $args = []);
 
     public function del($fd, $flag);
 

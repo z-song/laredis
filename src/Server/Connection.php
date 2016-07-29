@@ -2,13 +2,13 @@
 
 namespace Encore\Laredis\Server;
 
-use Exception;
-use InvalidArgumentException;
+use Encore\Laredis\Exceptions\NotFoundCommandException;
+use Encore\Laredis\Exceptions\NotFoundRouteException;
 use Encore\Laredis\Routing\Request;
 use Encore\Laredis\Routing\Response;
+use Exception;
 use Illuminate\Contracts\Support\Renderable;
-use Encore\Laredis\Exceptions\NotFoundRouteException;
-use Encore\Laredis\Exceptions\NotFoundCommandException;
+use InvalidArgumentException;
 
 class Connection
 {
@@ -94,7 +94,7 @@ class Connection
      * Create a new connection instance.
      *
      * @param resource $socket
-     * @param string $remoteAddress
+     * @param string   $remoteAddress
      */
     public function __construct($socket, $remoteAddress)
     {
@@ -118,26 +118,25 @@ class Connection
     public function read($socket)
     {
         // Check connection closed.
-        if (! $buffer = static::parseCommand($socket)) {
+        if (!$buffer = static::parseCommand($socket)) {
             $this->destroy();
+
             return;
         }
 
         $command = array_shift($buffer);
 
         try {
-
             $request = new Request($command, $buffer);
             $request->setConnection($this);
 
             $this->logRequest($request);
 
-            if ($this->isMulti && ! $this->isTransactionCmd($command)) {
+            if ($this->isMulti && !$this->isTransactionCmd($command)) {
                 $response = $this->queueCommand($request);
             } else {
                 $response = app('redis.router')->dispatch($request);
             }
-
         } catch (Exception $e) {
             $response = $this->handleException($e);
         }
@@ -153,6 +152,7 @@ class Connection
      * Log the request.
      *
      * @param Request $request
+     *
      * @return void
      */
     protected function logRequest(Request $request)
@@ -166,6 +166,7 @@ class Connection
      * Is transaction commands.
      *
      * @param $command
+     *
      * @return bool
      */
     public function isTransactionCmd($command)
@@ -177,6 +178,7 @@ class Connection
      * Queue commands.
      *
      * @param Request $request
+     *
      * @return Response
      */
     public function queueCommand(Request $request)
@@ -203,14 +205,13 @@ class Connection
      * Handle exceptions.
      *
      * @param Exception $exception
+     *
      * @return Response
      */
     public function handleException(Exception $exception)
     {
         try {
-
             throw $exception;
-
         } catch (NotFoundRouteException $e) {
             $response = new Response(null);
         } catch (NotFoundCommandException $e) {
@@ -238,7 +239,7 @@ class Connection
     /**
      * Base write handler.
      *
-     * @return boolean
+     * @return bool
      */
     public function write()
     {
@@ -257,8 +258,9 @@ class Connection
     /**
      * Destroy this connection.
      *
-     * @return void
      * @throws Exception
+     *
+     * @return void
      */
     protected function destroy()
     {
@@ -269,7 +271,7 @@ class Connection
         Server::$eventLoop->del($this->socket, EventLoop::EV_WRITE);
 
         // Close socket.
-        if (! fclose($this->socket)) {
+        if (!fclose($this->socket)) {
             throw new Exception('Close socket error.');
         }
 
@@ -312,8 +314,10 @@ class Connection
      * Parse command from client.
      *
      * @param $socket
-     * @return array|int|string
+     *
      * @throws Exception
+     *
+     * @return array|int|string
      */
     public static function parseCommand($socket)
     {
@@ -331,7 +335,7 @@ class Connection
                 $size = (int) $payload;
 
                 if ($size === -1) {
-                    return null;
+                    return;
                 }
 
                 $bulkData = '';
@@ -354,10 +358,10 @@ class Connection
                 $count = (int) $payload;
 
                 if ($count === -1) {
-                    return null;
+                    return;
                 }
 
-                $multibulk = array();
+                $multibulk = [];
 
                 for ($i = 0; $i < $count; ++$i) {
                     $multibulk[$i] = static::parseCommand($socket);
@@ -367,6 +371,7 @@ class Connection
 
             case ':':
                 $integer = (int) $payload;
+
                 return $integer == $payload ? $integer : $payload;
 
             default:

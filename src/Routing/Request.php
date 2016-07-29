@@ -5,7 +5,6 @@ namespace Encore\Laredis\Routing;
 class Request
 {
     /** Command of this request.
-     *
      * @var string
      */
     protected $command = '';
@@ -28,11 +27,11 @@ class Request
      * Create a new Request instance.
      *
      * @param string $command
-     * @param array $parameters
+     * @param array  $parameters
      */
     public function __construct($command, $parameters = [])
     {
-        $this->command    = strtoupper($command);
+        $this->command = strtoupper($command);
         $this->parameters = $parameters;
     }
 
@@ -68,6 +67,7 @@ class Request
      * Set parameters of the request.
      *
      * @param array $parameters
+     *
      * @return void
      */
     public function setParameters(array $parameters)
@@ -79,6 +79,7 @@ class Request
      * Get parameter by given index.
      *
      * @param mixed $index
+     *
      * @return null
      */
     public function parameter($index)
@@ -125,6 +126,7 @@ class Request
      * Getter of parameters of th request.
      *
      * @param $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -134,7 +136,5 @@ class Request
         if (array_key_exists($key, $all)) {
             return $all[$key];
         }
-
-        return null;
     }
 }

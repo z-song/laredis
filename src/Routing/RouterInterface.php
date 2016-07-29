@@ -8,6 +8,7 @@ interface RouterInterface
      * Send request.
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function send(Request $request);
