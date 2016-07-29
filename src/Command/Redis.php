@@ -48,12 +48,12 @@ class Redis
             'PUBLISH'   => PubSubPublish::class,
             'SUBSCRIBE' => PubSubSubscribe::class,
 
-            'SADD'      => SetAdd::class,
-            'SCARD'     => SetCard::class,
-            'SDIFF'     => SetDifference::class,
-            'SISMEMBER' => SetIsMember::class,
-            'SMEMBERS'  => SetMembers::class,
-            'SREM'      => SetRemove::class,
+            'SADD'        => SetAdd::class,
+            'SCARD'       => SetCard::class,
+            'SDIFF'       => SetDifference::class,
+            'SISMEMBER'   => SetIsMember::class,
+            'SMEMBERS'    => SetMembers::class,
+            'SREM'        => SetRemove::class,
             'SRANDMEMBER' => SetRandomMember::class,
 
             'MULTI'     => TransactionMulti::class,
@@ -66,6 +66,7 @@ class Redis
      * Check the server supports given command.
      *
      * @param string $command
+     *
      * @return bool
      */
     public static function supports($command)
@@ -77,12 +78,14 @@ class Redis
      * Find command class by command name.
      *
      * @param string $command
-     * @return mixed
+     *
      * @throws NotFoundCommandException
+     *
+     * @return mixed
      */
     public static function findCommandClass($command)
     {
-        if (! static::supports($command)) {
+        if (!static::supports($command)) {
             throw new NotFoundCommandException();
         }
 

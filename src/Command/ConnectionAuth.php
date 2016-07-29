@@ -13,11 +13,11 @@ class ConnectionAuth extends Command
 
     public function process()
     {
-        if (! Server::requirePass()) {
+        if (!Server::requirePass()) {
             throw new AuthException('Client sent AUTH, but no password is set');
         }
 
-        if (! Server::validatePassword($this->arguments[0])) {
+        if (!Server::validatePassword($this->arguments[0])) {
             throw new AuthException('invalid password');
         }
 

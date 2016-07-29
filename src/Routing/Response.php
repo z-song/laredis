@@ -9,8 +9,8 @@ use Illuminate\Support\Arr;
 class Response implements Renderable
 {
     const ERR = 0;
-    const OK  = 1;
-    const STATUS  = 2;
+    const OK = 1;
+    const STATUS = 2;
 
     protected $value;
 
@@ -64,6 +64,7 @@ class Response implements Renderable
 
         if (is_string($payload)) {
             $len = strlen($payload);
+
             return "\$$len\r\n$payload\r\n";
         }
 
@@ -76,9 +77,8 @@ class Response implements Renderable
         }
 
         if (is_array($payload)) {
-
             if (Arr::isAssoc($payload)) {
-                $bulk = "*".count($payload)*2 . "\r\n";
+                $bulk = '*'.count($payload) * 2 ."\r\n";
                 foreach ($payload as $key => $value) {
                     $bulk .= $this->encode($key);
                     $bulk .= $this->encode($value);
@@ -87,7 +87,7 @@ class Response implements Renderable
                 return $bulk;
             }
 
-            $bulk = "*".count($payload) . "\r\n";
+            $bulk = '*'.count($payload)."\r\n";
             foreach ($payload as $key => $value) {
                 $bulk .= $this->encode($value);
             }

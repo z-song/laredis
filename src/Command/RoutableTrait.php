@@ -21,6 +21,7 @@ trait RoutableTrait
 
     /**
      * @param \Encore\Laredis\Routing\Request|null $request
+     *
      * @return \Encore\Laredis\Routing\Response
      */
     public function process($request = null)

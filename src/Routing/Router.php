@@ -3,13 +3,13 @@
 namespace Encore\Laredis\Routing;
 
 use Closure;
+use Encore\Laredis\Command\Redis;
+use Encore\Laredis\Command\RoutableInterface;
+use Encore\Laredis\Exceptions\NotFoundCommandException;
+use Encore\Laredis\Exceptions\NotFoundRouteException;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Encore\Laredis\Command\Redis;
 use Illuminate\Container\Container;
-use Encore\Laredis\Command\RoutableInterface;
-use Encore\Laredis\Exceptions\NotFoundRouteException;
-use Encore\Laredis\Exceptions\NotFoundCommandException;
 use Illuminate\Pipeline\Pipeline;
 
 class Router implements RouterInterface
@@ -82,7 +82,7 @@ class Router implements RouterInterface
      */
     public function __construct(Container $container = null)
     {
-        $this->container = $container ?: new Container;
+        $this->container = $container ?: new Container();
 
         $this->loadMiddleware();
     }
@@ -100,8 +100,9 @@ class Router implements RouterInterface
     /**
      * Register a set of routes with a set of shared attributes.
      *
-     * @param  array  $attributes
-     * @param  \Closure  $callback
+     * @param array    $attributes
+     * @param \Closure $callback
+     *
      * @return void
      */
     public function group(array $attributes, Closure $callback)
@@ -125,6 +126,7 @@ class Router implements RouterInterface
      * @param $command
      * @param $key
      * @param $action
+     *
      * @return $this
      */
     public function command($command, $key, $action)
@@ -139,7 +141,7 @@ class Router implements RouterInterface
      *
      * @param string $command
      * @param string $key
-     * @param mixed $action
+     * @param mixed  $action
      */
     public function addRoute($command, $key, $action)
     {
@@ -169,14 +171,15 @@ class Router implements RouterInterface
     /**
      * Parse the action into an array format.
      *
-     * @param  mixed  $action
+     * @param mixed $action
+     *
      * @return array
      */
     protected function parseAction($action)
     {
         if (is_string($action)) {
             return ['uses' => $action];
-        } elseif (! is_array($action)) {
+        } elseif (!is_array($action)) {
             return [$action];
         }
 
@@ -190,7 +193,8 @@ class Router implements RouterInterface
     /**
      * Merge the group attributes into the action.
      *
-     * @param  array  $action
+     * @param array $action
+     *
      * @return array
      */
     protected function mergeGroupAttributes(array $action)
@@ -203,7 +207,8 @@ class Router implements RouterInterface
     /**
      * Merge the namespace group into the action.
      *
-     * @param  array  $action
+     * @param array $action
+     *
      * @return array
      */
     protected function mergeNamespaceGroup(array $action)
@@ -218,7 +223,8 @@ class Router implements RouterInterface
     /**
      * Merge the middleware group into the action.
      *
-     * @param  array  $action
+     * @param array $action
+     *
      * @return array
      */
     protected function mergeMiddlewareGroup($action)
@@ -237,12 +243,13 @@ class Router implements RouterInterface
     /**
      * Add new middleware to the application.
      *
-     * @param  Closure|array  $middleware
+     * @param Closure|array $middleware
+     *
      * @return $this
      */
     public function middleware($middleware)
     {
-        if (! is_array($middleware)) {
+        if (!is_array($middleware)) {
             $middleware = [$middleware];
         }
 
@@ -254,7 +261,8 @@ class Router implements RouterInterface
     /**
      * Define the route middleware for the application.
      *
-     * @param  array  $middleware
+     * @param array $middleware
+     *
      * @return $this
      */
     public function routeMiddleware(array $middleware)
@@ -268,12 +276,14 @@ class Router implements RouterInterface
      * Dispatch the incoming request.
      *
      * @param Request $request
-     * @return Response
+     *
      * @throws NotFoundCommandException
+     *
+     * @return Response
      */
     public function dispatch(Request $request)
     {
-        if (! Redis::supports($request->command())) {
+        if (!Redis::supports($request->command())) {
             throw new NotFoundCommandException($request->command());
         }
 
@@ -292,6 +302,7 @@ class Router implements RouterInterface
      * Send request.
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function send(Request $request)
@@ -329,14 +340,16 @@ class Router implements RouterInterface
      * Handle the response from the FastRoute dispatcher.
      *
      * @param array $routeInfo
-     * @return Response|null
+     *
      * @throws NotFoundRouteException
+     *
+     * @return Response|null
      */
     protected function handleDispatcherResponse($routeInfo)
     {
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
-                throw new NotFoundRouteException;
+                throw new NotFoundRouteException();
 
             case Dispatcher::METHOD_NOT_ALLOWED:
                 throw new NotFoundRouteException();
@@ -344,14 +357,13 @@ class Router implements RouterInterface
             case Dispatcher::FOUND:
                 return $this->handleFoundRoute($routeInfo);
         }
-
-        return null;
     }
 
     /**
      * Handle a route found by the dispatcher.
      *
-     * @param  array  $routeInfo
+     * @param array $routeInfo
+     *
      * @return Response
      */
     protected function handleFoundRoute($routeInfo)
@@ -377,7 +389,8 @@ class Router implements RouterInterface
     /**
      * Call the Closure on the array based route.
      *
-     * @param  array  $routeInfo
+     * @param array $routeInfo
+     *
      * @return Response
      */
     protected function callActionOnArrayBasedRoute($routeInfo)
@@ -404,15 +417,17 @@ class Router implements RouterInterface
      * Call a controller based route.
      *
      * @param array $routeInfo
-     * @return Response|mixed
+     *
      * @throws NotFoundRouteException
+     *
+     * @return Response|mixed
      */
     protected function callControllerAction($routeInfo)
     {
         list($controller, $method) = explode('@', $routeInfo[1]['uses']);
 
-        if (! method_exists($instance = $this->container->make($controller), $method)) {
-            throw new NotFoundRouteException;
+        if (!method_exists($instance = $this->container->make($controller), $method)) {
+            throw new NotFoundRouteException();
         }
 
         if ($instance instanceof Controller) {
@@ -425,9 +440,10 @@ class Router implements RouterInterface
     /**
      * Send the request through a controller.
      *
-     * @param  mixed  $instance
-     * @param  string  $method
-     * @param  array  $routeInfo
+     * @param mixed  $instance
+     * @param string $method
+     * @param array  $routeInfo
+     *
      * @return mixed
      */
     protected function callController($instance, $method, $routeInfo)
@@ -449,10 +465,11 @@ class Router implements RouterInterface
     /**
      * Send the request through a set of controller middleware.
      *
-     * @param  mixed  $instance
-     * @param  string  $method
-     * @param  array  $routeInfo
-     * @param  array  $middleware
+     * @param mixed  $instance
+     * @param string $method
+     * @param array  $routeInfo
+     * @param array  $middleware
+     *
      * @return mixed
      */
     protected function callControllerWithMiddleware($instance, $method, $routeInfo, $middleware)
@@ -467,8 +484,9 @@ class Router implements RouterInterface
     /**
      * Call a controller callable and return the response.
      *
-     * @param  callable  $callable
-     * @param  array  $parameters
+     * @param callable $callable
+     * @param array    $parameters
+     *
      * @return \Encore\Laredis\Routing\Response
      */
     protected function callControllerCallable(callable $callable, array $parameters = [])
@@ -483,7 +501,8 @@ class Router implements RouterInterface
     /**
      * Gather the full class names for the middleware short-cut string.
      *
-     * @param  string|array  $middleware
+     * @param string|array $middleware
+     *
      * @return array
      */
     protected function gatherMiddlewareClassNames($middleware)
@@ -500,8 +519,9 @@ class Router implements RouterInterface
     /**
      * Send the request through the pipeline with the given callback.
      *
-     * @param  array  $middleware
-     * @param  \Closure  $then
+     * @param array    $middleware
+     * @param \Closure $then
+     *
      * @return mixed
      */
     protected function sendThroughPipeline(array $middleware, Closure $then)
@@ -509,7 +529,7 @@ class Router implements RouterInterface
         $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
             $this->container->make('middleware.disable') === true;
 
-        if (count($middleware) > 0 && ! $shouldSkipMiddleware) {
+        if (count($middleware) > 0 && !$shouldSkipMiddleware) {
             return (new Pipeline($this->container))
                 ->send($this->request)
                 ->through($middleware)
@@ -523,6 +543,7 @@ class Router implements RouterInterface
      * Prepares for the response.
      *
      * @param mixed $response
+     *
      * @return Response
      */
     public function prepareResponse($response)

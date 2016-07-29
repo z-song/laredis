@@ -10,7 +10,7 @@ class TransactionDiscard extends Command
 
     public function process()
     {
-        if (! $this->request->connection()->isMulti) {
+        if (!$this->request->connection()->isMulti) {
             return new Response('DISCARD without MULTI', Response::ERR);
         }
 

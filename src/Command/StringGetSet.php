@@ -14,7 +14,7 @@ class StringGetSet extends Command implements RoutableInterface
 
     public function process()
     {
-        $key   = $this->arguments[0];
+        $key = $this->arguments[0];
         $value = $this->arguments[1];
 
         $request = new Request('GET', [$key]);

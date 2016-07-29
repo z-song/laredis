@@ -2,8 +2,8 @@
 
 namespace Encore\Laredis\Command;
 
-use InvalidArgumentException;
 use Encore\Laredis\Routing\Request;
+use InvalidArgumentException;
 
 abstract class Command
 {
@@ -37,6 +37,7 @@ abstract class Command
      * Create new command instance.
      *
      * Command constructor.
+     *
      * @param Request $request
      */
     public function __construct(Request $request)
@@ -45,7 +46,7 @@ abstract class Command
 
         $this->arguments = $request->parameters();
 
-        if (! $this->validateArguments()) {
+        if (!$this->validateArguments()) {
             throw new InvalidArgumentException(
                 strtolower($request->command())
             );

@@ -14,7 +14,7 @@ class TransactionExec extends Command implements RoutableInterface
 
     public function process()
     {
-        if (! $this->request->connection()->isMulti) {
+        if (!$this->request->connection()->isMulti) {
             return new Response('EXEC without MULTI', Response::ERR);
         }
 

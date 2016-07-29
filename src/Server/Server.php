@@ -2,11 +2,11 @@
 
 namespace Encore\Laredis\Server;
 
-use Exception;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Encore\Laredis\Server\EventLoop\Select;
 use Encore\Laredis\Server\EventLoop\Libevent;
+use Encore\Laredis\Server\EventLoop\Select;
+use Exception;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class Server
 {
@@ -62,7 +62,7 @@ class Server
     protected static $pidFile = '';
 
     /**
-     * @var integer
+     * @var int
      */
     protected static $pid = null;
 
@@ -72,7 +72,7 @@ class Server
     public static $logger = null;
 
     /**
-     * Create a instance of Server
+     * Create a instance of Server.
      *
      * @param string $socketName
      * @param $contextOption
@@ -84,7 +84,7 @@ class Server
 
         $components = parse_url($socketName);
 
-        $this->ip   = $components['host'];
+        $this->ip = $components['host'];
         $this->port = $components['port'];
 
         $this->init();
@@ -101,7 +101,7 @@ class Server
 
         // Pid file.
         if (empty(static::$pidFile)) {
-            static::$pidFile = sys_get_temp_dir() . "/laredis.pid";
+            static::$pidFile = sys_get_temp_dir().'/laredis.pid';
         }
     }
 
@@ -112,8 +112,8 @@ class Server
      */
     public function listen()
     {
-        $flags  = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
-        $errno  = 0;
+        $flags = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
+        $errno = 0;
         $errmsg = '';
 
         $this->server = stream_socket_server($this->socketName, $errno, $errmsg, $flags, $this->context);
@@ -124,7 +124,7 @@ class Server
 
         // Try to open keepalive for tcp and disable Nagle algorithm.
         if (function_exists('socket_import_stream')) {
-            if (! $socket = socket_import_stream($this->server)) {
+            if (!$socket = socket_import_stream($this->server)) {
                 throw new Exception('Import stream error.');
             }
 
@@ -159,7 +159,7 @@ class Server
     }
 
     /**
-     * Get eventloop
+     * Get eventloop.
      *
      * @return Libevent|Select
      */
@@ -181,7 +181,7 @@ class Server
     {
         self::$pid = posix_getpid();
         if (false === @file_put_contents(self::$pidFile, self::$pid)) {
-            throw new Exception('can not save pid to ' . self::$pidFile);
+            throw new Exception('can not save pid to '.self::$pidFile);
         }
     }
 
@@ -190,7 +190,7 @@ class Server
      */
     public function stop()
     {
-        static::$logger->info("Service stopping ...");
+        static::$logger->info('Service stopping ...');
 
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGINT");
         exec("ps aux | grep 'artisan redis-server start' | grep -v grep | awk '{print $2}' |xargs kill -SIGKILL");
@@ -204,14 +204,15 @@ class Server
         $this->stop();
         usleep(500);
 
-        static::$logger->info("Service starting ...");
-        exec("php ".base_path('artisan')." redis-server start -d > /dev/null &");
+        static::$logger->info('Service starting ...');
+        exec('php '.base_path('artisan').' redis-server start -d > /dev/null &');
     }
 
     /**
      * Accept a connection.
      *
      * @param resource $serverSocket
+     *
      * @return void
      */
     public function acceptConnection($serverSocket)
@@ -233,7 +234,7 @@ class Server
     /**
      * Close Connection.
      *
-     * @param integer $id
+     * @param int $id
      */
     public function closeConnection($id)
     {
@@ -257,8 +258,7 @@ class Server
      */
     protected function daemonize()
     {
-        if (! $this->isDaemonize()) {
-
+        if (!$this->isDaemonize()) {
             echo "Press Ctrl-C to quit. Start success.\n";
 
             return;
@@ -274,12 +274,12 @@ class Server
             exit(0);
         }
         if (-1 === posix_setsid()) {
-            throw new \Exception("setsid fail");
+            throw new \Exception('setsid fail');
         }
         // Fork again avoid SVR4 system regain the control of terminal.
         $pid = pcntl_fork();
         if (-1 === $pid) {
-            throw new \Exception("fork fail");
+            throw new \Exception('fork fail');
         } elseif (0 !== $pid) {
             exit(0);
         }
@@ -294,24 +294,25 @@ class Server
     {
         $passwords = (array) config('laredis.password');
 
-        return ! empty($passwords);
+        return !empty($passwords);
     }
 
     /**
      * Validate password.
      *
      * @param $password
+     *
      * @return bool
      */
     public static function validatePassword($password)
     {
-        $passwords  = (array) config('laredis.password');
+        $passwords = (array) config('laredis.password');
 
         return in_array($password, $passwords);
     }
 
     /**
-     * Show usage
+     * Show usage.
      *
      * @param $method
      * @param $arguments
@@ -319,7 +320,5 @@ class Server
     public function __call($method, $arguments)
     {
         echo "Usage: php artisan {start|stop|restart}\n";
-
-        return;
     }
 }

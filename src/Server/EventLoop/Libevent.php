@@ -5,7 +5,7 @@ namespace Encore\Laredis\Server\EventLoop;
 use Encore\Laredis\Server\EventLoop;
 
 /**
- * libevent eventloop
+ * libevent eventloop.
  */
 class Libevent implements EventLoop
 {
@@ -21,17 +21,17 @@ class Libevent implements EventLoop
      *
      * @var array
      */
-    protected $allEvents = array();
+    protected $allEvents = [];
 
     /**
      * Event listeners of signal.
      *
      * @var array
      */
-    protected $eventSignal = array();
+    protected $eventSignal = [];
 
     /**
-     * construct
+     * construct.
      */
     public function __construct()
     {
@@ -41,9 +41,9 @@ class Libevent implements EventLoop
     /**
      * {@inheritdoc}
      */
-    public function add($fd, $flag, $func, $args = array())
+    public function add($fd, $flag, $func, $args = [])
     {
-        $fdKey = (int)$fd;
+        $fdKey = (int) $fd;
 
         switch ($flag) {
             case self::EV_SIGNAL:
@@ -93,7 +93,7 @@ class Libevent implements EventLoop
      */
     public function del($fd, $flag)
     {
-        $fdKey = (int)$fd;
+        $fdKey = (int) $fd;
 
         switch ($flag) {
             case self::EV_READ:
@@ -113,6 +113,7 @@ class Libevent implements EventLoop
                 }
                 break;
         }
+
         return true;
     }
 

@@ -17,7 +17,6 @@ class StringGetMultiple extends Command implements RoutableInterface
         $result = [];
 
         foreach ($this->request->parameters() as $key) {
-
             $request = clone $this->request;
             $request->setCommand('GET');
             $request->setParameters([$key]);
